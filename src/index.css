@@ -122,19 +122,41 @@
   }
 }
 
-/* Infinite drift animation - stars continuously cycle from edges to center */
-@keyframes infinite-drift {
+/* Upward drift animation - stars move upward and cycle */
+@keyframes upward-drift {
   0% {
-    transform: translate(0, 0) scale(1);
+    transform: translateY(100vh) scale(1);
+    opacity: 0;
+  }
+  10% {
     opacity: 1;
   }
-  50% {
-    transform: translate(calc(50vw - 50%), calc(50vh - 50%)) scale(0.3);
-    opacity: 0.4;
+  90% {
+    opacity: 1;
   }
   100% {
-    transform: translate(calc(100vw - 100%), calc(100vh - 100%)) scale(1);
+    transform: translateY(-100vh) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* Комета анимация */
+@keyframes comet-flight {
+  0% {
+    left: -100px;
+    top: 20%;
+    opacity: 0;
+  }
+  5% {
     opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    left: 110%;
+    top: 80%;
+    opacity: 0;
   }
 }
 

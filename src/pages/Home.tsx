@@ -96,9 +96,11 @@ const Home = () => {
                 left: `${left}%`,
                 top: `${top}%`,
                 opacity: brightness,
-                animation: `enhanced-twinkle ${twinkleSpeed}s infinite, infinite-drift ${driftSpeed}s linear infinite`,
+                animation: `enhanced-twinkle ${twinkleSpeed}s infinite, upward-drift ${driftSpeed}s linear infinite`,
                 animationDelay: `${Math.random() * 3}s, ${resetDelay}s`,
-                boxShadow: sizeType > 0.95 ? '0 0 10px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,0.5)' : 'none'
+                boxShadow: sizeType > 0.9 ? '0 0 12px rgba(255,255,255,0.5), 0 0 24px rgba(255,255,255,0.3)' : 
+                          sizeType > 0.7 ? '0 0 6px rgba(255,255,255,0.4), 0 0 12px rgba(255,255,255,0.2)' :
+                          '0 0 3px rgba(255,255,255,0.3)'
               }}
             />
           );
@@ -110,6 +112,62 @@ const Home = () => {
 
 
 
+
+        {/* Созвездия */}
+        <div className="absolute inset-0">
+          {/* Большая медведица */}
+          <svg className="absolute" style={{ left: '20%', top: '30%', width: '200px', height: '120px' }}>
+            <g className="constellation opacity-60">
+              <line x1="20" y1="30" x2="60" y2="20" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <line x1="60" y1="20" x2="100" y2="25" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <line x1="100" y1="25" x2="140" y2="35" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <line x1="140" y1="35" x2="120" y2="70" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <line x1="120" y1="70" x2="80" y2="75" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <line x1="80" y1="75" x2="40" y2="65" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <line x1="40" y1="65" x2="20" y2="30" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <circle cx="20" cy="30" r="2" fill="rgba(255,255,255,0.8)" />
+              <circle cx="60" cy="20" r="2" fill="rgba(255,255,255,0.8)" />
+              <circle cx="100" cy="25" r="2" fill="rgba(255,255,255,0.8)" />
+              <circle cx="140" cy="35" r="2" fill="rgba(255,255,255,0.8)" />
+              <circle cx="120" cy="70" r="2" fill="rgba(255,255,255,0.8)" />
+              <circle cx="80" cy="75" r="2" fill="rgba(255,255,255,0.8)" />
+              <circle cx="40" cy="65" r="2" fill="rgba(255,255,255,0.8)" />
+            </g>
+          </svg>
+
+          {/* Орион */}
+          <svg className="absolute" style={{ left: '70%', top: '50%', width: '150px', height: '180px' }}>
+            <g className="constellation opacity-60">
+              <line x1="30" y1="20" x2="60" y2="30" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <line x1="60" y1="30" x2="90" y2="20" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <line x1="30" y1="80" x2="60" y2="70" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <line x1="60" y1="70" x2="90" y2="80" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <line x1="45" y1="120" x2="60" y2="140" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <line x1="60" y1="140" x2="75" y2="120" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
+              <circle cx="30" cy="20" r="2" fill="rgba(255,255,255,0.9)" />
+              <circle cx="60" cy="30" r="3" fill="rgba(255,255,255,0.9)" />
+              <circle cx="90" cy="20" r="2" fill="rgba(255,255,255,0.9)" />
+              <circle cx="30" cy="80" r="2" fill="rgba(255,255,255,0.8)" />
+              <circle cx="60" cy="70" r="2" fill="rgba(255,255,255,0.8)" />
+              <circle cx="90" cy="80" r="2" fill="rgba(255,255,255,0.8)" />
+              <circle cx="45" cy="120" r="1.5" fill="rgba(255,255,255,0.7)" />
+              <circle cx="60" cy="140" r="1.5" fill="rgba(255,255,255,0.7)" />
+              <circle cx="75" cy="120" r="1.5" fill="rgba(255,255,255,0.7)" />
+            </g>
+          </svg>
+        </div>
+
+        {/* Комета */}
+        <div className="absolute comet" style={{
+          left: '-100px',
+          top: '20%',
+          animation: 'comet-flight 25s linear infinite'
+        }}>
+          <div className="relative">
+            <div className="w-3 h-3 bg-white rounded-full opacity-90 shadow-[0_0_20px_rgba(255,255,255,0.8)]" />
+            <div className="absolute top-1/2 left-full w-32 h-0.5 bg-gradient-to-r from-white/60 via-blue-200/40 to-transparent transform -translate-y-1/2" />
+          </div>
+        </div>
 
       </div>
 
