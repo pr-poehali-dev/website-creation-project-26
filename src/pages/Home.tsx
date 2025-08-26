@@ -62,10 +62,10 @@ const Home = () => {
       {/* Enhanced space background */}
       <div className="absolute inset-0 overflow-hidden">
         
-        {/* Плавно падающие светящиеся звёзды */}
+        {/* Диагонально падающие светящиеся звёзды */}
         {Array.from({ length: 5 }, (_, i) => {
-          const startX = 10 + Math.random() * 80;
-          const startY = -10;
+          const startX = -5 + Math.random() * 30; // стартуют из левой части
+          const startY = -5 + Math.random() * 20; // стартуют из верхней части
           const duration = 8 + Math.random() * 6; // 8-14 секунд
           const delay = Math.random() * 20; // случайная задержка до 20 сек
           const size = 0.8 + Math.random() * 0.8; // размер 0.8-1.6
@@ -77,7 +77,7 @@ const Home = () => {
               style={{
                 left: `${startX}%`,
                 top: `${startY}%`,
-                animation: `gentle-fall ${duration}s ease-in-out infinite`,
+                animation: `diagonal-fall ${duration}s ease-in-out infinite`,
                 animationDelay: `${delay}s`
               }}
             >
