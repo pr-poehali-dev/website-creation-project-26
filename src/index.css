@@ -140,20 +140,20 @@
   }
 }
 
-/* Метеор анимация */
-@keyframes meteor-fall {
+/* Падающая звезда анимация */
+@keyframes falling-star {
   0% {
-    transform: translateX(0) translateY(0) scale(1) rotate(-30deg);
+    transform: translateX(0) translateY(0) scale(1);
     opacity: 0;
   }
-  5% {
-    opacity: 1;
-  }
-  95% {
+  10% {
     opacity: 0.8;
   }
+  50% {
+    opacity: 0.6;
+  }
   100% {
-    transform: translateX(300px) translateY(200px) scale(0.5) rotate(-30deg);
+    transform: translateX(200px) translateY(150px) scale(0.3);
     opacity: 0;
   }
 }

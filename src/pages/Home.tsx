@@ -62,7 +62,7 @@ const Home = () => {
       {/* Enhanced space background */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Static stars with center drift effect */}
-        {Array.from({ length: 600 }, (_, i) => {
+        {Array.from({ length: 800 }, (_, i) => {
           const left = Math.random() * 100;
           const top = Math.random() * 100;
           const sizeType = Math.random();
@@ -71,17 +71,17 @@ const Home = () => {
           if (sizeType < 0.7) {
             // Tiny stars (70%)
             size = 'w-px h-px';
-            brightness = 0.6 + Math.random() * 0.4;
+            brightness = 0.8 + Math.random() * 0.2;
             twinkleSpeed = 2 + Math.random() * 3;
           } else if (sizeType < 0.9) {
             // Medium stars (20%)
             size = 'w-0.5 h-0.5';
-            brightness = 0.7 + Math.random() * 0.3;
+            brightness = 0.9 + Math.random() * 0.1;
             twinkleSpeed = 1.5 + Math.random() * 2.5;
           } else {
             // Bright stars (10%)
             size = 'w-1 h-1';
-            brightness = 0.8 + Math.random() * 0.2;
+            brightness = 0.95 + Math.random() * 0.05;
             twinkleSpeed = 1 + Math.random() * 2;
           }
           
@@ -107,45 +107,69 @@ const Home = () => {
               <div className="relative flex items-center justify-center">
                 {/* Основное тело звезды */}
                 <div 
-                  className={sizeType > 0.9 ? 'w-1.5 h-1.5' : sizeType > 0.7 ? 'w-1 h-1' : 'w-0.5 h-0.5'}
+                  className={sizeType > 0.9 ? 'w-2 h-2' : sizeType > 0.7 ? 'w-1.5 h-1.5' : 'w-1 h-1'}
                   style={{
-                    background: starColor,
+                    background: `radial-gradient(circle, ${starColor} 0%, ${starColor}88 70%, transparent 100%)`,
                     borderRadius: '50%',
                     opacity: brightness,
-                    filter: `blur(${sizeType > 0.9 ? '0.3px' : '0.1px'})`,
-                    boxShadow: sizeType > 0.9 ? `0 0 6px ${starColor}, 0 0 12px ${starColor}66` : 
-                              sizeType > 0.7 ? `0 0 3px ${starColor}, 0 0 6px ${starColor}44` :
-                              `0 0 2px ${starColor}66`
+                    filter: `blur(${sizeType > 0.9 ? '0.5px' : '0.2px'})`,
+                    boxShadow: sizeType > 0.9 ? `0 0 8px ${starColor}66, 0 0 16px ${starColor}33` : 
+                              sizeType > 0.7 ? `0 0 4px ${starColor}55, 0 0 8px ${starColor}22` :
+                              `0 0 2px ${starColor}44`
                   }}
                 />
                 
-                {/* Лучи только для крупных звезд */}
-                {sizeType > 0.85 && (
+                {/* Горизонтальный луч */}
+                <div 
+                  className="absolute"
+                  style={{
+                    width: sizeType > 0.9 ? '16px' : sizeType > 0.7 ? '12px' : '8px',
+                    height: '1px',
+                    background: `linear-gradient(90deg, transparent, ${starColor}${Math.floor(brightness * 100).toString(16)}, transparent)`,
+                    opacity: brightness * 0.8,
+                    filter: 'blur(0.3px)'
+                  }}
+                />
+                
+                {/* Вертикальный луч */}
+                <div 
+                  className="absolute"
+                  style={{
+                    width: '1px',
+                    height: sizeType > 0.9 ? '16px' : sizeType > 0.7 ? '12px' : '8px',
+                    background: `linear-gradient(180deg, transparent, ${starColor}${Math.floor(brightness * 100).toString(16)}, transparent)`,
+                    opacity: brightness * 0.8,
+                    filter: 'blur(0.3px)'
+                  }}
+                />
+                
+                {/* Диагональные лучи для крупных звезд */}
+                {sizeType > 0.8 && (
                   <>
                     <div 
                       className="absolute"
                       style={{
-                        width: '12px',
-                        height: '0.5px',
-                        background: `linear-gradient(90deg, transparent, ${starColor}, transparent)`,
-                        opacity: brightness * 0.7,
-                        filter: 'blur(0.2px)'
+                        width: '10px',
+                        height: '1px',
+                        background: `linear-gradient(90deg, transparent, ${starColor}${Math.floor(brightness * 60).toString(16)}, transparent)`,
+                        transform: 'rotate(45deg)',
+                        opacity: brightness * 0.6,
+                        filter: 'blur(0.4px)'
                       }}
                     />
                     <div 
                       className="absolute"
                       style={{
-                        width: '0.5px',
-                        height: '12px',
-                        background: `linear-gradient(180deg, transparent, ${starColor}, transparent)`,
-                        opacity: brightness * 0.7,
-                        filter: 'blur(0.2px)'
+                        width: '10px',
+                        height: '1px',
+                        background: `linear-gradient(90deg, transparent, ${starColor}${Math.floor(brightness * 60).toString(16)}, transparent)`,
+                        transform: 'rotate(-45deg)',
+                        opacity: brightness * 0.6,
+                        filter: 'blur(0.4px)'
                       }}
                     />
                   </>
                 )}
-                
-
               </div>
             </div>
           );
@@ -160,50 +184,23 @@ const Home = () => {
 
         {/* Падающие звезды */}
         <div className="absolute inset-0">
-          {Array.from({ length: 4 }, (_, i) => {
-            const startX = 10 + Math.random() * 80;
-            const startY = 10 + Math.random() * 30;
-            const duration = 3 + Math.random() * 4;
-            const delay = Math.random() * 15;
-            
-            return (
-              <div 
-                key={`meteor-${i}`}
-                className="absolute meteor" 
-                style={{
-                  left: `${startX}%`,
-                  top: `${startY}%`,
-                  animation: `meteor-fall ${duration}s linear infinite`,
-                  animationDelay: `${delay}s`
-                }}
-              >
-                <div className="relative">
-                  {/* Головка метеора */}
-                  <div className="w-2 h-2 bg-white rounded-full opacity-90 shadow-[0_0_15px_rgba(255,255,255,0.9)]" />
-                  
-                  {/* Хвост метеора */}
-                  <div className="absolute top-1/2 right-full transform -translate-y-1/2">
-                    <div 
-                      className="h-0.5 bg-gradient-to-l from-white via-blue-200 to-transparent opacity-80"
-                      style={{
-                        width: '40px',
-                        filter: 'blur(0.5px)',
-                        transform: 'rotate(-30deg) translateY(-2px)'
-                      }}
-                    />
-                    <div 
-                      className="h-0.5 bg-gradient-to-l from-white/60 via-blue-100/40 to-transparent opacity-60 mt-0.5"
-                      style={{
-                        width: '60px',
-                        filter: 'blur(1px)',
-                        transform: 'rotate(-30deg) translateY(-4px)'
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          <div className="absolute falling-star" style={{
+            left: '15%',
+            top: '25%',
+            animation: 'falling-star 8s linear infinite',
+            animationDelay: '2s'
+          }}>
+            <div className="w-1 h-1 bg-white rounded-full opacity-80 shadow-[0_0_8px_rgba(255,255,255,0.6)]" />
+          </div>
+          
+          <div className="absolute falling-star" style={{
+            left: '75%',
+            top: '35%',
+            animation: 'falling-star 12s linear infinite',
+            animationDelay: '6s'
+          }}>
+            <div className="w-1 h-1 bg-white rounded-full opacity-70 shadow-[0_0_6px_rgba(255,255,255,0.5)]" />
+          </div>
         </div>
 
       </div>
