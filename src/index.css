@@ -153,6 +153,21 @@
   transform: translateY(-50%) rotate(45deg);
 }
 
+.constellation-star {
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+  animation: constellation-twinkle 3s ease-in-out infinite;
+}
+
+@keyframes constellation-twinkle {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

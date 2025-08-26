@@ -101,6 +101,85 @@ const Home = () => {
           );
         })}
 
+        {/* Milky Way */}
+        <div className="absolute inset-0 opacity-20">
+          <div 
+            className="absolute w-full h-96 bg-gradient-to-r from-transparent via-blue-200 to-transparent rotate-45 origin-center"
+            style={{
+              background: 'linear-gradient(90deg, transparent 0%, rgba(147,197,253,0.1) 10%, rgba(147,197,253,0.3) 30%, rgba(147,197,253,0.5) 50%, rgba(147,197,253,0.3) 70%, rgba(147,197,253,0.1) 90%, transparent 100%)',
+              top: '20%',
+              left: '-20%',
+              width: '140%',
+              height: '200px',
+              transform: 'rotate(-20deg)',
+              filter: 'blur(2px)'
+            }}
+          />
+        </div>
+
+        {/* Constellation Leo (Лев) */}
+        <div className="absolute constellation-leo" style={{ top: '25%', left: '20%' }}>
+          {/* Regulus - brightest star */}
+          <div className="absolute w-1.5 h-1.5 bg-blue-200 rounded-full constellation-star" style={{ top: '40px', left: '60px' }} />
+          {/* Algieba */}
+          <div className="absolute w-1 h-1 bg-white rounded-full constellation-star" style={{ top: '20px', left: '40px' }} />
+          {/* Denebola */}
+          <div className="absolute w-1 h-1 bg-white rounded-full constellation-star" style={{ top: '50px', left: '120px' }} />
+          {/* Zosma */}
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '35px', left: '100px' }} />
+          {/* Adhafera */}
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '15px', left: '80px' }} />
+          {/* Head stars */}
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '5px', left: '20px' }} />
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '10px', left: '5px' }} />
+          {/* Body stars */}
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '60px', left: '80px' }} />
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '70px', left: '70px' }} />
+          
+          {/* Leo constellation lines */}
+          <svg className="absolute inset-0 w-32 h-20 pointer-events-none" style={{ opacity: 0.3 }}>
+            <line x1="20" y1="5" x2="40" y2="20" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="40" y1="20" x2="60" y2="40" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="60" y1="40" x2="80" y2="15" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="80" y1="15" x2="100" y2="35" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="100" y1="35" x2="120" y2="50" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="60" y1="40" x2="80" y2="60" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="80" y1="60" x2="70" y2="70" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+          </svg>
+        </div>
+
+        {/* Constellation Scorpius (Скорпион) */}
+        <div className="absolute constellation-scorpius" style={{ top: '50%', left: '65%' }}>
+          {/* Antares - red supergiant */}
+          <div className="absolute w-1.5 h-1.5 bg-red-400 rounded-full constellation-star" style={{ top: '30px', left: '40px' }} />
+          {/* Shaula */}
+          <div className="absolute w-1 h-1 bg-blue-200 rounded-full constellation-star" style={{ top: '80px', left: '100px' }} />
+          {/* Sargas */}
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '20px', left: '20px' }} />
+          {/* Body stars */}
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '25px', left: '60px' }} />
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '35px', left: '80px' }} />
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '50px', left: '90px' }} />
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '65px', left: '95px' }} />
+          {/* Tail stars */}
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '75px', left: '105px' }} />
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '85px', left: '110px' }} />
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '90px', left: '120px' }} />
+          
+          {/* Scorpius constellation lines */}
+          <svg className="absolute inset-0 w-32 h-24 pointer-events-none" style={{ opacity: 0.3 }}>
+            <line x1="20" y1="20" x2="40" y2="30" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="40" y1="30" x2="60" y2="25" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="60" y1="25" x2="80" y2="35" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="80" y1="35" x2="90" y2="50" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="90" y1="50" x2="95" y2="65" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="95" y1="65" x2="100" y2="80" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="100" y1="80" x2="105" y2="75" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="105" y1="75" x2="110" y2="85" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+            <line x1="110" y1="85" x2="120" y2="90" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+          </svg>
+        </div>
+
         {/* Shooting stars */}
         {Array.from({ length: 5 }, (_, i) => {
           const startDelay = Math.random() * 10;
