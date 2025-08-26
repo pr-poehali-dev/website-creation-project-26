@@ -58,7 +58,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-slate-950 to-black relative overflow-hidden flex flex-col p-4">
+    <div className="min-h-screen bg-gradient-to-br from-black via-blue-950 to-slate-950 relative overflow-hidden flex flex-col p-4">
       {/* Enhanced space background */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Static stars with center drift effect */}
@@ -107,31 +107,7 @@ const Home = () => {
 
 
 
-        {/* Slow shooting stars - only 2-3 */}
-        {Array.from({ length: 3 }, (_, i) => {
-          const startDelay = 5 + Math.random() * 15; // Much longer delays
-          const duration = 4 + Math.random() * 6; // Much slower (4-10 seconds)
-          const positions = [
-            { x: 10, y: 10 }, // Top left
-            { x: 80, y: 20 }, // Top right  
-            { x: 50, y: 70 }  // Bottom center
-          ];
-          const pos = positions[i];
-          
-          return (
-            <div
-              key={`shooting-${i}`}
-              className="absolute w-1.5 h-1.5 bg-white rounded-full slow-shooting-star opacity-0"
-              style={{
-                left: `${pos.x}%`,
-                top: `${pos.y}%`,
-                animation: `slow-shooting-star ${duration}s linear infinite`,
-                animationDelay: `${startDelay}s`,
-                boxShadow: '0 0 15px rgba(255,255,255,1), 0 0 30px rgba(255,255,255,0.6)'
-              }}
-            />
-          );
-        })}
+
 
 
       </div>
