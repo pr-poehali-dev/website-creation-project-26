@@ -58,143 +58,148 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 relative overflow-hidden flex flex-col p-4">
-      {/* Space background with natural starfield */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-black relative overflow-hidden flex flex-col p-4">
+      {/* Enhanced space background */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Static stars */}
-        {Array.from({ length: 200 }, (_, i) => {
+        {/* Static stars - more contrasted */}
+        {Array.from({ length: 300 }, (_, i) => {
           const left = Math.random() * 100;
           const top = Math.random() * 100;
           const sizeType = Math.random();
-          let size, brightness, twinkleSpeed;
+          let size, brightness, twinkleSpeed, color;
           
-          if (sizeType < 0.7) {
-            // Tiny stars (70%)
+          if (sizeType < 0.6) {
+            // Tiny stars (60%)
             size = 'w-px h-px';
-            brightness = 0.4 + Math.random() * 0.4;
-            twinkleSpeed = 3 + Math.random() * 4;
-          } else if (sizeType < 0.9) {
-            // Small stars (20%)
-            size = 'w-0.5 h-0.5';
-            brightness = 0.6 + Math.random() * 0.3;
+            brightness = 0.6 + Math.random() * 0.4;
             twinkleSpeed = 2 + Math.random() * 3;
+            color = 'bg-white';
+          } else if (sizeType < 0.85) {
+            // Medium stars (25%)
+            size = 'w-0.5 h-0.5';
+            brightness = 0.7 + Math.random() * 0.3;
+            twinkleSpeed = 1.5 + Math.random() * 2.5;
+            color = Math.random() > 0.7 ? 'bg-blue-100' : 'bg-white';
           } else {
-            // Bright stars (10%)
+            // Bright stars (15%)
             size = 'w-1 h-1';
             brightness = 0.8 + Math.random() * 0.2;
-            twinkleSpeed = 1.5 + Math.random() * 2;
+            twinkleSpeed = 1 + Math.random() * 2;
+            color = Math.random() > 0.5 ? 'bg-blue-200' : 'bg-yellow-100';
           }
           
           return (
             <div
               key={i}
-              className={`absolute ${size} bg-white rounded-full`}
+              className={`absolute ${size} ${color} rounded-full star-glow`}
               style={{
                 left: `${left}%`,
                 top: `${top}%`,
                 opacity: brightness,
-                animation: `twinkle ${twinkleSpeed}s infinite`,
+                animation: `enhanced-twinkle ${twinkleSpeed}s infinite`,
                 animationDelay: `${Math.random() * 3}s`,
-                boxShadow: sizeType > 0.95 ? '0 0 4px rgba(255,255,255,0.8)' : 'none'
+                boxShadow: sizeType > 0.9 ? '0 0 8px rgba(255,255,255,0.9), 0 0 16px rgba(147,197,253,0.6)' : 'none'
               }}
             />
           );
         })}
 
-        {/* Milky Way */}
-        <div className="absolute inset-0 opacity-20">
+        {/* Enhanced Milky Way */}
+        <div className="absolute inset-0 opacity-40">
           <div 
-            className="absolute w-full h-96 bg-gradient-to-r from-transparent via-blue-200 to-transparent rotate-45 origin-center"
+            className="absolute milky-way"
             style={{
-              background: 'linear-gradient(90deg, transparent 0%, rgba(147,197,253,0.1) 10%, rgba(147,197,253,0.3) 30%, rgba(147,197,253,0.5) 50%, rgba(147,197,253,0.3) 70%, rgba(147,197,253,0.1) 90%, transparent 100%)',
-              top: '20%',
-              left: '-20%',
-              width: '140%',
-              height: '200px',
-              transform: 'rotate(-20deg)',
-              filter: 'blur(2px)'
+              background: 'linear-gradient(90deg, transparent 0%, rgba(147,197,253,0.2) 5%, rgba(255,255,255,0.15) 20%, rgba(147,197,253,0.4) 35%, rgba(255,255,255,0.3) 50%, rgba(147,197,253,0.4) 65%, rgba(255,255,255,0.15) 80%, rgba(147,197,253,0.2) 95%, transparent 100%)',
+              top: '10%',
+              left: '-30%',
+              width: '160%',
+              height: '300px',
+              transform: 'rotate(-25deg)',
+              filter: 'blur(3px)',
+              animation: 'milky-way-shimmer 8s ease-in-out infinite'
             }}
           />
         </div>
 
-        {/* Constellation Leo (Лев) */}
-        <div className="absolute constellation-leo" style={{ top: '25%', left: '20%' }}>
-          {/* Regulus - brightest star */}
-          <div className="absolute w-1.5 h-1.5 bg-blue-200 rounded-full constellation-star" style={{ top: '40px', left: '60px' }} />
-          {/* Algieba */}
-          <div className="absolute w-1 h-1 bg-white rounded-full constellation-star" style={{ top: '20px', left: '40px' }} />
-          {/* Denebola */}
-          <div className="absolute w-1 h-1 bg-white rounded-full constellation-star" style={{ top: '50px', left: '120px' }} />
-          {/* Zosma */}
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '35px', left: '100px' }} />
-          {/* Adhafera */}
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '15px', left: '80px' }} />
-          {/* Head stars */}
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '5px', left: '20px' }} />
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '10px', left: '5px' }} />
-          {/* Body stars */}
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '60px', left: '80px' }} />
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '70px', left: '70px' }} />
+        {/* Enhanced Constellation Leo */}
+        <div className="absolute constellation-leo" style={{ top: '20%', left: '15%' }}>
+          {/* Regulus - α Leonis - brightest star */}
+          <div className="absolute w-2 h-2 bg-blue-100 rounded-full constellation-star-bright" style={{ top: '50px', left: '70px' }} />
+          {/* Algieba - γ Leonis */}
+          <div className="absolute w-1.5 h-1.5 bg-yellow-100 rounded-full constellation-star-bright" style={{ top: '25px', left: '50px' }} />
+          {/* Denebola - β Leonis */}
+          <div className="absolute w-1.5 h-1.5 bg-white rounded-full constellation-star-bright" style={{ top: '55px', left: '140px' }} />
+          {/* Zosma - δ Leonis */}
+          <div className="absolute w-1 h-1 bg-white rounded-full constellation-star" style={{ top: '40px', left: '115px' }} />
+          {/* Adhafera - ζ Leonis */}
+          <div className="absolute w-1 h-1 bg-white rounded-full constellation-star" style={{ top: '18px', left: '90px' }} />
+          {/* Ras Elased - μ Leonis */}
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '8px', left: '25px' }} />
+          {/* Alterf - λ Leonis */}
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '12px', left: '8px' }} />
+          {/* Chertan - θ Leonis */}
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '70px', left: '95px' }} />
           
-          {/* Leo constellation lines */}
-          <svg className="absolute inset-0 w-32 h-20 pointer-events-none" style={{ opacity: 0.3 }}>
-            <line x1="20" y1="5" x2="40" y2="20" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="40" y1="20" x2="60" y2="40" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="60" y1="40" x2="80" y2="15" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="80" y1="15" x2="100" y2="35" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="100" y1="35" x2="120" y2="50" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="60" y1="40" x2="80" y2="60" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="80" y1="60" x2="70" y2="70" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+          {/* Leo constellation lines - brighter */}
+          <svg className="absolute inset-0 w-36 h-24 pointer-events-none" style={{ opacity: 0.6 }}>
+            <line x1="25" y1="8" x2="50" y2="25" stroke="rgba(147,197,253,0.8)" strokeWidth="1.5"/>
+            <line x1="50" y1="25" x2="70" y2="50" stroke="rgba(147,197,253,0.8)" strokeWidth="1.5"/>
+            <line x1="70" y1="50" x2="90" y2="18" stroke="rgba(147,197,253,0.8)" strokeWidth="1.5"/>
+            <line x1="90" y1="18" x2="115" y2="40" stroke="rgba(147,197,253,0.8)" strokeWidth="1.5"/>
+            <line x1="115" y1="40" x2="140" y2="55" stroke="rgba(147,197,253,0.8)" strokeWidth="1.5"/>
+            <line x1="70" y1="50" x2="95" y2="70" stroke="rgba(147,197,253,0.8)" strokeWidth="1.5"/>
           </svg>
         </div>
 
-        {/* Constellation Scorpius (Скорпион) */}
-        <div className="absolute constellation-scorpius" style={{ top: '50%', left: '65%' }}>
-          {/* Antares - red supergiant */}
-          <div className="absolute w-1.5 h-1.5 bg-red-400 rounded-full constellation-star" style={{ top: '30px', left: '40px' }} />
-          {/* Shaula */}
-          <div className="absolute w-1 h-1 bg-blue-200 rounded-full constellation-star" style={{ top: '80px', left: '100px' }} />
-          {/* Sargas */}
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '20px', left: '20px' }} />
-          {/* Body stars */}
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '25px', left: '60px' }} />
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '35px', left: '80px' }} />
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '50px', left: '90px' }} />
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '65px', left: '95px' }} />
+        {/* Enhanced Constellation Scorpius */}
+        <div className="absolute constellation-scorpius" style={{ top: '45%', left: '60%' }}>
+          {/* Antares - α Scorpii - red supergiant */}
+          <div className="absolute w-2.5 h-2.5 bg-red-400 rounded-full constellation-star-bright" style={{ top: '35px', left: '50px' }} />
+          {/* Shaula - λ Scorpii */}
+          <div className="absolute w-1.5 h-1.5 bg-blue-100 rounded-full constellation-star-bright" style={{ top: '100px', left: '120px' }} />
+          {/* Sargas - θ Scorpii */}
+          <div className="absolute w-1 h-1 bg-yellow-100 rounded-full constellation-star" style={{ top: '25px', left: '25px' }} />
+          {/* Dschubba - δ Scorpii */}
+          <div className="absolute w-1 h-1 bg-white rounded-full constellation-star" style={{ top: '30px', left: '70px' }} />
+          {/* β Scorpii */}
+          <div className="absolute w-1 h-1 bg-white rounded-full constellation-star" style={{ top: '40px', left: '90px' }} />
+          {/* π Scorpii */}
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '60px', left: '105px' }} />
           {/* Tail stars */}
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '75px', left: '105px' }} />
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '85px', left: '110px' }} />
-          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '90px', left: '120px' }} />
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '80px', left: '115px' }} />
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '95px', left: '125px' }} />
+          <div className="absolute w-0.5 h-0.5 bg-white rounded-full constellation-star" style={{ top: '105px', left: '135px' }} />
           
-          {/* Scorpius constellation lines */}
-          <svg className="absolute inset-0 w-32 h-24 pointer-events-none" style={{ opacity: 0.3 }}>
-            <line x1="20" y1="20" x2="40" y2="30" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="40" y1="30" x2="60" y2="25" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="60" y1="25" x2="80" y2="35" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="80" y1="35" x2="90" y2="50" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="90" y1="50" x2="95" y2="65" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="95" y1="65" x2="100" y2="80" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="100" y1="80" x2="105" y2="75" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="105" y1="75" x2="110" y2="85" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
-            <line x1="110" y1="85" x2="120" y2="90" stroke="rgba(255,255,255,0.4)" strokeWidth="1"/>
+          {/* Scorpius constellation lines - brighter */}
+          <svg className="absolute inset-0 w-36 h-28 pointer-events-none" style={{ opacity: 0.6 }}>
+            <line x1="25" y1="25" x2="50" y2="35" stroke="rgba(239,68,68,0.7)" strokeWidth="1.5"/>
+            <line x1="50" y1="35" x2="70" y2="30" stroke="rgba(239,68,68,0.7)" strokeWidth="1.5"/>
+            <line x1="70" y1="30" x2="90" y2="40" stroke="rgba(239,68,68,0.7)" strokeWidth="1.5"/>
+            <line x1="90" y1="40" x2="105" y2="60" stroke="rgba(239,68,68,0.7)" strokeWidth="1.5"/>
+            <line x1="105" y1="60" x2="115" y2="80" stroke="rgba(239,68,68,0.7)" strokeWidth="1.5"/>
+            <line x1="115" y1="80" x2="120" y2="100" stroke="rgba(239,68,68,0.7)" strokeWidth="1.5"/>
+            <line x1="120" y1="100" x2="125" y2="95" stroke="rgba(239,68,68,0.7)" strokeWidth="1.5"/>
+            <line x1="125" y1="95" x2="135" y2="105" stroke="rgba(239,68,68,0.7)" strokeWidth="1.5"/>
           </svg>
         </div>
 
-        {/* Shooting stars */}
-        {Array.from({ length: 5 }, (_, i) => {
-          const startDelay = Math.random() * 10;
-          const duration = 1 + Math.random() * 2;
+        {/* Enhanced shooting stars */}
+        {Array.from({ length: 8 }, (_, i) => {
+          const startDelay = Math.random() * 12;
+          const duration = 0.8 + Math.random() * 1.5;
+          const startX = Math.random() * 60;
+          const startY = Math.random() * 40;
           
           return (
             <div
               key={`shooting-${i}`}
-              className="absolute w-0.5 h-0.5 bg-white rounded-full shooting-star opacity-0"
+              className="absolute w-1 h-1 bg-white rounded-full shooting-star-enhanced opacity-0"
               style={{
-                left: `${10 + Math.random() * 80}%`,
-                top: `${10 + Math.random() * 30}%`,
-                animation: `shooting-star ${duration}s linear infinite`,
+                left: `${startX}%`,
+                top: `${startY}%`,
+                animation: `enhanced-shooting-star ${duration}s linear infinite`,
                 animationDelay: `${startDelay}s`,
-                boxShadow: '0 0 6px rgba(255,255,255,1), 0 0 12px rgba(173,216,230,0.8)'
+                boxShadow: '0 0 12px rgba(255,255,255,1), 0 0 24px rgba(147,197,253,0.8), 0 0 36px rgba(59,130,246,0.6)'
               }}
             />
           );

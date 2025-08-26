@@ -82,34 +82,55 @@
 }
 
 /* Space animations */
-@keyframes twinkle {
+/* Enhanced star animations */
+@keyframes enhanced-twinkle {
   0%,
   100% {
-    opacity: 0.4;
+    opacity: 0.6;
     transform: scale(1);
+  }
+  25% {
+    opacity: 0.8;
+    transform: scale(1.1);
   }
   50% {
     opacity: 1;
+    transform: scale(1.2);
+  }
+  75% {
+    opacity: 0.9;
     transform: scale(1.1);
   }
 }
 
-@keyframes shooting-star {
+@keyframes enhanced-shooting-star {
   0% {
     opacity: 0;
     transform: translateX(0) translateY(0) scale(0);
   }
-  10% {
+  5% {
     opacity: 1;
-    transform: translateX(20px) translateY(20px) scale(1);
+    transform: translateX(30px) translateY(30px) scale(1);
   }
-  90% {
-    opacity: 0.8;
-    transform: translateX(200px) translateY(200px) scale(1);
+  95% {
+    opacity: 0.6;
+    transform: translateX(300px) translateY(300px) scale(0.8);
   }
   100% {
     opacity: 0;
-    transform: translateX(250px) translateY(250px) scale(0);
+    transform: translateX(350px) translateY(350px) scale(0);
+  }
+}
+
+@keyframes milky-way-shimmer {
+  0%,
+  100% {
+    opacity: 0.4;
+    filter: blur(3px) brightness(1);
+  }
+  50% {
+    opacity: 0.6;
+    filter: blur(2px) brightness(1.2);
   }
 }
 
@@ -153,18 +174,70 @@
   transform: translateY(-50%) rotate(45deg);
 }
 
+/* Enhanced shooting star trail */
+.shooting-star-enhanced::after {
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 1) 30%,
+    rgba(147, 197, 253, 0.8) 70%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  top: 50%;
+  left: -60px;
+  transform: translateY(-50%) rotate(45deg);
+  filter: blur(0.5px);
+}
+
+/* Enhanced constellation stars */
 .constellation-star {
-  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
-  animation: constellation-twinkle 3s ease-in-out infinite;
+  box-shadow:
+    0 0 6px rgba(255, 255, 255, 0.9),
+    0 0 12px rgba(147, 197, 253, 0.5);
+  animation: constellation-twinkle 2.5s ease-in-out infinite;
+}
+
+.constellation-star-bright {
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 1),
+    0 0 20px rgba(147, 197, 253, 0.8),
+    0 0 30px rgba(59, 130, 246, 0.6);
+  animation: constellation-bright-twinkle 2s ease-in-out infinite;
+}
+
+.star-glow {
+  transition: all 0.3s ease;
 }
 
 @keyframes constellation-twinkle {
   0%,
   100% {
     opacity: 0.8;
+    transform: scale(1);
   }
   50% {
     opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes constellation-bright-twinkle {
+  0%,
+  100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  33% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  66% {
+    opacity: 0.95;
+    transform: scale(1.05);
   }
 }
 
