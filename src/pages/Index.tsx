@@ -415,14 +415,25 @@ const Index = () => {
                     {/* Action Buttons */}
                     <div className="flex justify-center gap-4">
                       <Button
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
+                          // Полностью очищаем состояние и возвращаем к режиму записи
                           setRecordedVideo(null);
                           setRecordingTime(0);
+                          setIsRecording(false);
+                          // Если есть поток, останавливаем его
+                          if (stream) {
+                            stream.getTracks().forEach(track => track.stop());
+                            setStream(null);
+                          }
                         }}
                         variant="outline"
-                        className="flex items-center gap-2 px-6 py-3"
+                        className="flex items-center gap-2 px-6 py-3 border-2 border-gray-300 hover:border-gray-400"
                         size="lg"
                         type="button"
                       >
