@@ -2,6 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .animate-pulse-soft {
+    animation: pulse-soft 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-soft-delay {
+    animation: pulse-soft 3s ease-in-out infinite;
+    animation-delay: 0.5s;
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 6s ease-in-out infinite;
+  }
+
+  .animate-bounce-slow-delay {
+    animation: bounce-slow 6s ease-in-out infinite;
+    animation-delay: 2s;
+  }
+
+  .animate-bounce-slow-delay-2 {
+    animation: bounce-slow 6s ease-in-out infinite;
+    animation-delay: 4s;
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes bounce-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

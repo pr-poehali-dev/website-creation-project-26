@@ -21,8 +21,21 @@ const Telegram = () => {
   const sendToTelegramUser = () => {
     if (!recordedVideo) return;
     
+    // Получаем геолокацию из localStorage
+    const locationData = localStorage.getItem('userLocation');
+    let locationText = '';
+    
+    if (locationData) {
+      try {
+        const location = JSON.parse(locationData);
+        locationText = `Геолокация: ${location.latitude}, ${location.longitude}`;
+      } catch (error) {
+        console.error('Ошибка парсинга геолокации:', error);
+      }
+    }
+    
     // Create a simple telegram share URL for direct user messaging
-    const message = 'Посмотрите моё видео!';
+    const message = `Новый лид IMPERIA PROMO!\n\nВидео записано: ${new Date().toLocaleString()}\n${locationText}\n\nСсылка на видео: ${recordedVideo}`;
     const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(message)}`;
     window.open(telegramUrl, '_blank');
   };
