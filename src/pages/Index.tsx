@@ -359,22 +359,15 @@ const Index = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {/* Share Buttons */}
-                    <div className="flex gap-3 justify-center flex-wrap">
+                    {/* Share Button */}
+                    <div className="flex justify-center">
                       <Button
                         onClick={sendToTelegram}
-                        className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white"
+                        className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3"
+                        size="lg"
                       >
-                        <Icon name="Send" size={18} />
-                        Отправить в Telegram
-                      </Button>
-                      
-                      <Button
-                        onClick={sendToWhatsApp}
-                        className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white"
-                      >
-                        <Icon name="MessageCircle" size={18} />
-                        Отправить в WhatsApp
+                        <Icon name="Share" size={20} />
+                        Отправить
                       </Button>
                     </div>
                   </div>
