@@ -55,9 +55,25 @@ const Index = () => {
     setRecordedVideo(null);
     chunksRef.current = [];
     
-    const mediaRecorder = new MediaRecorder(stream, {
-      mimeType: 'video/webm;codecs=vp8,opus'
-    });
+    let mediaRecorder;
+    try {
+      // Try MP4 format first
+      mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'video/mp4'
+      });
+    } catch (e) {
+      try {
+        // Fallback to webm with H.264 if available
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType: 'video/webm;codecs=h264'
+        });
+      } catch (e2) {
+        // Final fallback to default webm
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType: 'video/webm;codecs=vp8,opus'
+        });
+      }
+    }
     
     mediaRecorderRef.current = mediaRecorder;
     
@@ -68,7 +84,9 @@ const Index = () => {
     };
     
     mediaRecorder.onstop = () => {
-      const blob = new Blob(chunksRef.current, { type: 'video/webm' });
+      // Determine the correct MIME type based on what was actually recorded
+      const mimeType = mediaRecorderRef.current?.mimeType || 'video/mp4';
+      const blob = new Blob(chunksRef.current, { type: mimeType });
       const videoURL = URL.createObjectURL(blob);
       setRecordedVideo(videoURL);
     };
@@ -108,18 +126,53 @@ const Index = () => {
     
     const a = document.createElement('a');
     a.href = recordedVideo;
-    a.download = `video_${Date.now()}.webm`;
+    // Determine file extension based on blob type
+    const videoBlob = recordedVideo.startsWith('blob:') ? recordedVideo : recordedVideo;
+    const extension = videoBlob.includes('mp4') ? 'mp4' : 'webm';
+    a.download = `video_${Date.now()}.${extension}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   };
 
-  const sendToTelegram = () => {
+  const sendToTelegram = async () => {
     if (!recordedVideo) return;
     
-    // Store video in sessionStorage and navigate to telegram page
-    sessionStorage.setItem('recordedVideo', recordedVideo);
-    window.location.href = '/telegram';
+    try {
+      // Convert blob to file for sharing
+      const response = await fetch(recordedVideo);
+      const blob = await response.blob();
+      const mimeType = blob.type || 'video/mp4';
+      const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
+      const file = new File([blob], `video_${Date.now()}.${extension}`, { type: mimeType });
+      
+      // Check if Web Share API is available
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Моё видео',
+          text: 'Посмотрите моё видео!',
+          files: [file]
+        });
+      } else {
+        // Fallback: create a downloadable link and suggest manual sharing
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `video_${Date.now()}.${extension}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        // Show instructions for manual sharing
+        alert('Видео сохранено! Теперь откройте Telegram и прикрепите скачанный файл к сообщению.');
+      }
+    } catch (error) {
+      console.error('Ошибка отправки:', error);
+      // Fallback to download
+      saveVideo();
+      alert('Видео сохранено в галерею. Откройте Telegram и прикрепите файл к сообщению.');
+    }
   };
 
   const formatTime = (seconds: number) => {
@@ -240,7 +293,7 @@ const Index = () => {
 
               {/* Video Info */}
               <div className="mt-6 text-center text-sm text-gray-500">
-                <p>Качество: 360p • Максимум: 5 минут • Тыловая камера</p>
+                <p>Формат: MP4 • Качество: 360p • Максимум: 5 минут • Тыловая камера</p>
                 {recordingTime > 0 && !isRecording && (
                   <p className="mt-1">Длительность: {formatTime(recordingTime)}</p>
                 )}
