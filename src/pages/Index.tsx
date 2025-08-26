@@ -51,27 +51,60 @@ const Index = () => {
     }
   };
 
-  const startRecording = () => {
-    if (!stream) return;
+  const startRecording = async () => {
+    // If no stream, request camera and microphone permissions first
+    if (!stream) {
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            width: { ideal: 480 },
+            height: { ideal: 360 },
+            frameRate: { ideal: 15 },
+            facingMode: 'environment'
+          }, 
+          audio: true 
+        });
+        
+        setStream(mediaStream);
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+        }
+        
+        // Wait a moment for video to load
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Now start recording with the new stream
+        startRecordingWithStream(mediaStream);
+      } catch (error) {
+        console.error('Ошибка доступа к камере:', error);
+        alert('Не удалось получить доступ к камере и микрофону. Проверьте разрешения.');
+        return;
+      }
+    } else {
+      // Stream exists, start recording immediately
+      startRecordingWithStream(stream);
+    }
+  };
 
+  const startRecordingWithStream = (mediaStream: MediaStream) => {
     setRecordedVideo(null);
     chunksRef.current = [];
     
     let mediaRecorder;
     try {
       // Try MP4 format first
-      mediaRecorder = new MediaRecorder(stream, {
+      mediaRecorder = new MediaRecorder(mediaStream, {
         mimeType: 'video/mp4'
       });
     } catch (e) {
       try {
         // Fallback to webm with H.264 if available
-        mediaRecorder = new MediaRecorder(stream, {
+        mediaRecorder = new MediaRecorder(mediaStream, {
           mimeType: 'video/webm;codecs=h264'
         });
       } catch (e2) {
         // Final fallback to default webm
-        mediaRecorder = new MediaRecorder(stream, {
+        mediaRecorder = new MediaRecorder(mediaStream, {
           mimeType: 'video/webm;codecs=vp8,opus'
         });
       }
@@ -226,11 +259,7 @@ const Index = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  useEffect(() => {
-    if (!recordedVideo) {
-      startCamera();
-    }
-  }, [recordedVideo]);
+  // Remove auto-start camera effect
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -269,7 +298,7 @@ const Index = () => {
                     controls
                     className="w-full h-full object-cover"
                   />
-                ) : (
+                ) : stream ? (
                   <video
                     ref={videoRef}
                     autoPlay
@@ -277,6 +306,14 @@ const Index = () => {
                     playsInline
                     className="w-full h-full object-cover"
                   />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white">
+                    <div className="text-center">
+                      <Icon name="Video" size={48} className="mx-auto mb-4 opacity-50" />
+                      <p className="text-lg font-medium">Нажмите кнопку для записи</p>
+                      <p className="text-sm opacity-75 mt-2">Потребуется доступ к камере и микрофону</p>
+                    </div>
+                  </div>
                 )}
                 
                 {/* Recording Indicator */}
