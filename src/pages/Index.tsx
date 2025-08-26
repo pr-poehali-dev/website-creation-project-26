@@ -41,8 +41,8 @@ const Index = () => {
           echoCancellation: true,
           noiseSuppression: true,
           autoGainControl: true,
-          sampleRate: 44100,
-          channelCount: 2
+          sampleRate: 48000,  // Standard for WebM/Opus
+          channelCount: 1     // Mono for better Telegram compatibility
         }
       });
       
@@ -71,8 +71,8 @@ const Index = () => {
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true,
-            sampleRate: 44100,
-            channelCount: 2
+            sampleRate: 48000,  // Standard for WebM/Opus
+            channelCount: 1     // Mono for better Telegram compatibility
           }
         });
         
@@ -117,26 +117,36 @@ const Index = () => {
     let mediaRecorder;
     
     try {
-      // Try MP4 first (preferred format)
-      if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac')) {
+      // WebM with VP8+Opus is more compatible with Telegram on Android
+      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/webm;codecs=vp8,opus',
+          audioBitsPerSecond: 96000,  // Lower bitrate for better compatibility
+          videoBitsPerSecond: 1000000 // Lower bitrate for better compatibility
+        });
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')) {
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/webm;codecs=vp9,opus',
+          audioBitsPerSecond: 96000,
+          videoBitsPerSecond: 1000000
+        });
+      } else if (MediaRecorder.isTypeSupported('video/webm')) {
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/webm',
+          audioBitsPerSecond: 96000,
+          videoBitsPerSecond: 1000000
+        });
+      } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac')) {
+        // MP4 as fallback
         mediaRecorder = new MediaRecorder(mediaStream, {
           mimeType: 'video/mp4;codecs=h264,aac',
-          audioBitsPerSecond: 128000,
-          videoBitsPerSecond: 2500000
-        });
-      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
-        mediaRecorder = new MediaRecorder(mediaStream, {
-          mimeType: 'video/mp4',
-          audioBitsPerSecond: 128000,
-          videoBitsPerSecond: 2500000
+          audioBitsPerSecond: 96000,
+          videoBitsPerSecond: 1000000
         });
       } else {
-        // If MP4 is not supported, use default format
-        console.warn('MP4 not supported, using default format');
-        mediaRecorder = new MediaRecorder(mediaStream, {
-          audioBitsPerSecond: 128000,
-          videoBitsPerSecond: 2500000
-        });
+        // Default format
+        console.warn('Using default MediaRecorder format');
+        mediaRecorder = new MediaRecorder(mediaStream);
       }
       
       console.log('MediaRecorder created with mimeType:', mediaRecorder.mimeType);
