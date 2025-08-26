@@ -58,7 +58,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white relative overflow-hidden flex flex-col p-4">
+    <div className="h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white relative overflow-hidden flex flex-col p-4">
       {/* Background geometric shapes */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Large squares */}
@@ -86,26 +86,26 @@ const Home = () => {
       {/* Main content - centered vertically and horizontally */}
       <div className="relative z-10 flex-1 flex items-center justify-center">
         <div className="text-center ml-1.5">
-          <h1 className="text-5xl md:text-7xl font-black tracking-wider mb-2 animate-pulse-soft text-slate-800">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-wider mb-1 animate-pulse-soft text-slate-800">
             IMPERIA
           </h1>
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="w-16 h-0.5 bg-slate-700"></div>
-            <h2 className="text-2xl md:text-4xl font-normal tracking-[0.3em] animate-pulse-soft-delay text-slate-700">
+          <div className="flex items-center justify-center gap-2 sm:gap-4 mb-2">
+            <div className="w-8 sm:w-16 h-0.5 bg-slate-700"></div>
+            <h2 className="text-lg sm:text-2xl md:text-4xl font-normal tracking-[0.3em] animate-pulse-soft-delay text-slate-700">
               PROMO
             </h2>
-            <div className="w-16 h-0.5 bg-slate-700"></div>
+            <div className="w-8 sm:w-16 h-0.5 bg-slate-700"></div>
           </div>
         </div>
       </div>
 
       {/* Button - positioned at bottom center */}
-      <div className="relative z-10 flex justify-center mb-64 -ml-1.5">
+      <div className="relative z-10 flex justify-center mb-8 sm:mb-16 -ml-1.5">
         <Button
           onClick={handleNewLead}
           disabled={isGettingLocation}
           size="default"
-          className="animate-gradient-shimmer text-white text-lg px-8 py-4 rounded-2xl shadow-2xl transform transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-600/20 font-bold tracking-wide uppercase"
+          className="animate-gradient-shimmer text-white text-base sm:text-lg px-6 py-3 sm:px-8 sm:py-4 rounded-2xl shadow-2xl transform transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-600/20 font-bold tracking-wide uppercase"
         >
           {isGettingLocation ? (
             <div className="flex items-center gap-3">
