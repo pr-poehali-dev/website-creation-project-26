@@ -187,6 +187,21 @@ const Index = () => {
     }
     
     try {
+      // Получаем геолокацию из localStorage
+      const locationData = localStorage.getItem('userLocation');
+      let locationText = '';
+      let googleMapsLink = '';
+      
+      if (locationData) {
+        try {
+          const location = JSON.parse(locationData);
+          locationText = `\n\n📍 Геолокация:\nШирота: ${location.latitude}\nДолгота: ${location.longitude}\nВремя: ${new Date(location.timestamp).toLocaleString()}`;
+          googleMapsLink = `\n🗺️ Карты: https://maps.google.com/?q=${location.latitude},${location.longitude}`;
+        } catch (error) {
+          console.error('Ошибка парсинга геолокации:', error);
+        }
+      }
+      
       const response = await fetch(recordedVideo);
       const blob = await response.blob();
       const mimeType = blob.type || 'video/mp4';
@@ -196,8 +211,8 @@ const Index = () => {
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
           await navigator.share({
-            title: 'Моё видео',
-            text: 'Посмотрите моё видео!',
+            title: '🎥 Новый лид IMPERIA PROMO',
+            text: `🎥 Новый лид IMPERIA PROMO!\n\n📅 Время записи: ${new Date().toLocaleString()}${locationText}${googleMapsLink}`,
             files: [file]
           });
           
@@ -229,9 +244,9 @@ const Index = () => {
       const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
       if (isMobile) {
-        alert(`Видео сохранено: "${fileName}"\n\nДля отправки в Telegram или WhatsApp:\n1. Откройте приложение\n2. Выберите получателя\n3. Нажмите кнопку прикрепления\n4. Выберите сохраненное видео`);
+        alert(`🎥 Новый лид IMPERIA PROMO!\n\nВидео сохранено: "${fileName}"\n📅 Время: ${new Date().toLocaleString()}${locationText}${googleMapsLink}\n\nДля отправки в Telegram:\n1. Откройте Telegram\n2. Выберите получателя\n3. Нажмите кнопку прикрепления\n4. Выберите сохраненное видео\n5. Добавьте это сообщение в качестве подписи`);
       } else {
-        alert(`Видео загружено: "${fileName}"\n\nДля отправки:\n1. Откройте Telegram Web или WhatsApp Web\n2. Перетащите файл в окно чата\nили используйте кнопку прикрепления`);
+        alert(`🎥 Новый лид IMPERIA PROMO!\n\nВидео загружено: "${fileName}"\n📅 Время: ${new Date().toLocaleString()}${locationText}${googleMapsLink}\n\nДля отправки в Telegram:\n1. Откройте Telegram Web\n2. Перетащите файл в окно чата\n3. Добавьте данные как подпись к видео`);
       }
       
       setTimeout(() => {
