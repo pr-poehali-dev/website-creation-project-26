@@ -105,7 +105,7 @@ const Home = () => {
           onClick={handleNewLead}
           disabled={isGettingLocation}
           size="lg"
-          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-xl px-12 py-6 rounded-2xl shadow-2xl transform transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-400/20"
+          className="bg-gradient-to-r from-slate-800 via-slate-700 to-blue-600 hover:from-slate-700 hover:via-blue-600 hover:to-blue-700 text-white text-xl px-12 py-6 rounded-2xl shadow-2xl transform transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-600/20"
         >
           {isGettingLocation ? (
             <div className="flex items-center gap-3">
