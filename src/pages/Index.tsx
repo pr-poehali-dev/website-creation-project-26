@@ -216,24 +216,7 @@ const Index = () => {
       const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
       const file = new File([blob], `video_${Date.now()}.${extension}`, { type: mimeType });
       
-      // Get user location
-      let locationText = '';
-      try {
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 60000
-          });
-        });
-        
-        const { latitude, longitude } = position.coords;
-        locationText = `\n\n📍 Местоположение: https://maps.google.com/maps?q=${latitude},${longitude}`;
-      } catch (locationError) {
-        console.log('Не удалось получить геолокацию:', locationError);
-      }
-      
-      const shareText = locationText;
+      const shareText = '';
 
       // Check if Web Share API is available
       if (navigator.share) {
@@ -270,24 +253,7 @@ const Index = () => {
       const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
       const file = new File([blob], `video_${Date.now()}.${extension}`, { type: mimeType });
       
-      // Get user location
-      let locationText = '';
-      try {
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 60000
-          });
-        });
-        
-        const { latitude, longitude } = position.coords;
-        locationText = `\n\n📍 Местоположение: https://maps.google.com/maps?q=${latitude},${longitude}`;
-      } catch (locationError) {
-        console.log('Не удалось получить геолокацию:', locationError);
-      }
-      
-      const shareText = locationText;
+      const shareText = '';
 
       // Check if Web Share API is available
       if (navigator.share) {
