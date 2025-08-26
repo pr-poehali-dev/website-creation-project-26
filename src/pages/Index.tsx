@@ -415,13 +415,16 @@ const Index = () => {
                     {/* Action Buttons */}
                     <div className="flex justify-center gap-4">
                       <Button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
                           setRecordedVideo(null);
                           setRecordingTime(0);
                         }}
                         variant="outline"
                         className="flex items-center gap-2 px-6 py-3"
                         size="lg"
+                        type="button"
                       >
                         <Icon name="RotateCcw" size={20} />
                         Пересъемка
