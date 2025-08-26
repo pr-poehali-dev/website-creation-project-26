@@ -116,15 +116,15 @@ const Home = () => {
       {/* Main content - centered vertically and horizontally */}
       <div className="relative z-10 flex-1 flex items-center justify-center">
         <div className="text-center ml-1.5">
-          <h1 className="text-5xl md:text-7xl font-black tracking-wider mb-2 animate-pulse-soft text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
+          <h1 className="text-5xl md:text-7xl font-black tracking-wider mb-2 animate-pulse-soft text-gray-300 drop-shadow-[0_0_8px_rgba(156,163,175,0.3)]">
             IMPERIA
           </h1>
           <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-blue-300 to-transparent opacity-80"></div>
-            <h2 className="text-2xl md:text-4xl font-normal tracking-[0.3em] animate-pulse-soft-delay text-blue-100 drop-shadow-[0_0_10px_rgba(147,197,253,0.8)]">
+            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-60"></div>
+            <h2 className="text-2xl md:text-4xl font-normal tracking-[0.3em] animate-pulse-soft-delay text-gray-400 drop-shadow-[0_0_6px_rgba(156,163,175,0.2)]">
               PROMO
             </h2>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-blue-300 to-transparent opacity-80"></div>
+            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-60"></div>
           </div>
         </div>
       </div>
@@ -135,7 +135,7 @@ const Home = () => {
           onClick={handleNewLead}
           disabled={isGettingLocation}
           size="default"
-          className="bg-gradient-to-r from-blue-900/80 via-slate-800/80 to-blue-900/80 backdrop-blur-sm text-white text-lg px-8 py-4 rounded-2xl shadow-[0_0_25px_rgba(59,130,246,0.4)] transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_35px_rgba(59,130,246,0.6)] hover:from-blue-800/90 hover:via-slate-700/90 hover:to-blue-800/90 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-400/30 font-bold tracking-wide uppercase relative overflow-hidden group"
+          className="bg-gradient-to-r from-gray-800/60 via-gray-900/60 to-gray-800/60 backdrop-blur-sm text-gray-300 text-lg px-8 py-4 rounded-2xl shadow-[0_0_12px_rgba(156,163,175,0.2)] transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_18px_rgba(156,163,175,0.3)] hover:from-gray-700/70 hover:via-gray-800/70 hover:to-gray-700/70 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-500/20 font-bold tracking-wide uppercase relative overflow-hidden group"
         >
           {isGettingLocation ? (
             <div className="flex items-center gap-3">
@@ -144,8 +144,8 @@ const Home = () => {
             </div>
           ) : (
             <>
-              <span className="relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">Новый лид</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+              <span className="relative z-10 drop-shadow-[0_0_4px_rgba(156,163,175,0.2)]">Новый лид</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-300/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
             </>
           )}
         </Button>
