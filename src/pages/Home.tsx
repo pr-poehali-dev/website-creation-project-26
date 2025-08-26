@@ -62,7 +62,7 @@ const Home = () => {
       {/* Enhanced space background */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Static stars with center drift effect */}
-        {Array.from({ length: 400 }, (_, i) => {
+        {Array.from({ length: 800 }, (_, i) => {
           const left = Math.random() * 100;
           const top = Math.random() * 100;
           const sizeType = Math.random();
@@ -85,7 +85,8 @@ const Home = () => {
             twinkleSpeed = 1 + Math.random() * 2;
           }
           
-          const driftSpeed = 30 + Math.random() * 40;
+          const driftSpeed = 60 + Math.random() * 80;
+          const resetDelay = Math.random() * driftSpeed;
           
           return (
             <div
@@ -95,8 +96,8 @@ const Home = () => {
                 left: `${left}%`,
                 top: `${top}%`,
                 opacity: brightness,
-                animation: `enhanced-twinkle ${twinkleSpeed}s infinite, center-drift ${driftSpeed}s linear infinite`,
-                animationDelay: `${Math.random() * 3}s, ${Math.random() * 10}s`,
+                animation: `enhanced-twinkle ${twinkleSpeed}s infinite, infinite-drift ${driftSpeed}s linear infinite`,
+                animationDelay: `${Math.random() * 3}s, ${resetDelay}s`,
                 boxShadow: sizeType > 0.95 ? '0 0 10px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,0.5)' : 'none'
               }}
             />

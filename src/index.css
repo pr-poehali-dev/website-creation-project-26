@@ -122,19 +122,19 @@
   }
 }
 
-/* Center drift animation - stars move toward center and scale down */
-@keyframes center-drift {
+/* Infinite drift animation - stars continuously cycle from edges to center */
+@keyframes infinite-drift {
   0% {
     transform: translate(0, 0) scale(1);
     opacity: 1;
   }
   50% {
-    transform: translate(calc(50vw - 50%), calc(50vh - 50%)) scale(0.7);
-    opacity: 0.8;
+    transform: translate(calc(50vw - 50%), calc(50vh - 50%)) scale(0.3);
+    opacity: 0.4;
   }
   100% {
-    transform: translate(calc(50vw - 50%), calc(50vh - 50%)) scale(0.1);
-    opacity: 0;
+    transform: translate(calc(100vw - 100%), calc(100vh - 100%)) scale(1);
+    opacity: 1;
   }
 }
 
