@@ -62,7 +62,8 @@ const Home = () => {
       {/* Enhanced space background */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Static stars with center drift effect */}
-        {Array.from({ length: 800 }, (_, i) => {
+        {/* Все звёзды удалены */}
+        {false && Array.from({ length: 0 }, (_, i) => {
           const left = Math.random() * 100;
           const top = Math.random() * 100;
           const sizeType = Math.random();
@@ -182,26 +183,7 @@ const Home = () => {
 
 
 
-        {/* Падающие звезды */}
-        <div className="absolute inset-0">
-          <div className="absolute falling-star" style={{
-            left: '15%',
-            top: '25%',
-            animation: 'falling-star 8s linear infinite',
-            animationDelay: '2s'
-          }}>
-            <div className="w-1 h-1 bg-white rounded-full opacity-80 shadow-[0_0_8px_rgba(255,255,255,0.6)]" />
-          </div>
-          
-          <div className="absolute falling-star" style={{
-            left: '75%',
-            top: '35%',
-            animation: 'falling-star 12s linear infinite',
-            animationDelay: '6s'
-          }}>
-            <div className="w-1 h-1 bg-white rounded-full opacity-70 shadow-[0_0_6px_rgba(255,255,255,0.5)]" />
-          </div>
-        </div>
+
 
       </div>
 
