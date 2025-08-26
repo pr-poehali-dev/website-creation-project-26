@@ -85,7 +85,7 @@ const Home = () => {
 
       {/* Main content - centered vertically and horizontally */}
       <div className="relative z-10 flex-1 flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center ml-1.5">
           <h1 className="text-5xl md:text-7xl font-black tracking-wider mb-2 animate-pulse-soft text-slate-800">
             IMPERIA
           </h1>
@@ -100,7 +100,7 @@ const Home = () => {
       </div>
 
       {/* Button - positioned at bottom center */}
-      <div className="relative z-10 flex justify-center mb-32">
+      <div className="relative z-10 flex justify-center mb-38">
         <Button
           onClick={handleNewLead}
           disabled={isGettingLocation}
