@@ -58,7 +58,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden flex flex-col p-4">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-black relative overflow-hidden flex flex-col p-4">
       {/* Enhanced space background */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Static stars with center drift effect */}
@@ -98,9 +98,7 @@ const Home = () => {
                 opacity: brightness,
                 animation: `enhanced-twinkle ${twinkleSpeed}s infinite, infinite-drift ${driftSpeed}s linear infinite`,
                 animationDelay: `${Math.random() * 3}s, ${resetDelay}s`,
-                boxShadow: sizeType > 0.9 ? '0 0 20px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.8), 0 0 60px rgba(255,255,255,0.4)' : 
-                          sizeType > 0.7 ? '0 0 8px rgba(255,255,255,0.9), 0 0 16px rgba(255,255,255,0.5)' :
-                          '0 0 4px rgba(255,255,255,0.6)'
+                boxShadow: sizeType > 0.95 ? '0 0 10px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,0.5)' : 'none'
               }}
             />
           );
@@ -154,8 +152,8 @@ const Home = () => {
       </div>
 
       {/* Cosmic fog overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-800/40 via-gray-700/30 to-gray-800/40 pointer-events-none"></div>
-      <div className="absolute inset-0 bg-gradient-to-t from-gray-900/30 via-transparent to-gray-900/30 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-gray-900/40 to-black/30 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/20 pointer-events-none"></div>
     </div>
   );
 };
