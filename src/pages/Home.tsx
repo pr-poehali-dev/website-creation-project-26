@@ -62,25 +62,25 @@ const Home = () => {
       {/* Background geometric shapes */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Large squares */}
-        <div className="geometric-shape w-32 h-32 bg-blue-200 top-10 left-10 transform rotate-45 animate-float-geometric"></div>
-        <div className="geometric-shape w-24 h-24 bg-blue-300 top-20 right-20 transform rotate-12 animate-float-geometric-delay-1"></div>
-        <div className="geometric-shape w-40 h-40 bg-blue-100 bottom-20 left-16 transform -rotate-45 animate-float-geometric-reverse"></div>
+        <div className="geometric-shape w-32 h-32 bg-blue-500 top-10 left-10 transform rotate-45 animate-float-geometric"></div>
+        <div className="geometric-shape w-24 h-24 bg-blue-600 top-20 right-20 transform rotate-12 animate-float-geometric-delay-1"></div>
+        <div className="geometric-shape w-40 h-40 bg-blue-400 bottom-20 left-16 transform -rotate-45 animate-float-geometric-reverse"></div>
         
         {/* Medium rectangles */}
-        <div className="geometric-shape w-20 h-32 bg-blue-250 top-1/3 right-10 transform rotate-30 animate-float-geometric-delay-2"></div>
-        <div className="geometric-shape w-28 h-20 bg-blue-200 bottom-1/3 right-1/4 transform -rotate-12 animate-float-geometric"></div>
+        <div className="geometric-shape w-20 h-32 bg-slate-700 top-1/3 right-10 transform rotate-30 animate-float-geometric-delay-2"></div>
+        <div className="geometric-shape w-28 h-20 bg-blue-500 bottom-1/3 right-1/4 transform -rotate-12 animate-float-geometric"></div>
         
         {/* Small diamonds */}
-        <div className="geometric-shape w-16 h-16 bg-blue-300 top-1/2 left-5 transform rotate-45 animate-float-geometric-reverse"></div>
-        <div className="geometric-shape w-12 h-12 bg-blue-200 top-3/4 right-8 transform rotate-45 animate-float-geometric-delay-1"></div>
+        <div className="geometric-shape w-16 h-16 bg-blue-600 top-1/2 left-5 transform rotate-45 animate-float-geometric-reverse"></div>
+        <div className="geometric-shape w-12 h-12 bg-slate-800 top-3/4 right-8 transform rotate-45 animate-float-geometric-delay-1"></div>
         
         {/* Additional geometric elements */}
-        <div className="geometric-shape w-36 h-18 bg-blue-150 top-40 left-1/3 transform rotate-60 animate-float-geometric-delay-2"></div>
-        <div className="geometric-shape w-22 h-22 bg-blue-250 bottom-40 left-1/4 transform -rotate-30 animate-float-geometric"></div>
+        <div className="geometric-shape w-36 h-18 bg-blue-400 top-40 left-1/3 transform rotate-60 animate-float-geometric-delay-2"></div>
+        <div className="geometric-shape w-22 h-22 bg-slate-700 bottom-40 left-1/4 transform -rotate-30 animate-float-geometric"></div>
         
         {/* Corner elements */}
-        <div className="geometric-shape w-28 h-28 bg-blue-100 top-5 right-1/3 transform rotate-45 animate-float-geometric-reverse"></div>
-        <div className="geometric-shape w-18 h-18 bg-blue-300 bottom-10 right-5 transform rotate-45 animate-float-geometric-delay-1"></div>
+        <div className="geometric-shape w-28 h-28 bg-blue-500 top-5 right-1/3 transform rotate-45 animate-float-geometric-reverse"></div>
+        <div className="geometric-shape w-18 h-18 bg-blue-700 bottom-10 right-5 transform rotate-45 animate-float-geometric-delay-1"></div>
       </div>
 
       {/* Main content - centered vertically and horizontally */}
