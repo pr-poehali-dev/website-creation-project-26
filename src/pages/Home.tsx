@@ -62,7 +62,7 @@ const Home = () => {
       {/* Enhanced space background */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Static stars with center drift effect */}
-        {Array.from({ length: 800 }, (_, i) => {
+        {Array.from({ length: 1500 }, (_, i) => {
           const left = Math.random() * 100;
           const top = Math.random() * 100;
           const sizeType = Math.random();
