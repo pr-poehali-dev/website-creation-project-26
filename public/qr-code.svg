@@ -1,0 +1,42 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <rect width="256" height="256" fill="white"/>
+  <rect x="32" y="32" width="64" height="64" fill="black"/>
+  <rect x="160" y="32" width="64" height="64" fill="black"/>
+  <rect x="32" y="160" width="64" height="64" fill="black"/>
+  
+  <rect x="40" y="40" width="48" height="48" fill="white"/>
+  <rect x="168" y="40" width="48" height="48" fill="white"/>
+  <rect x="40" y="168" width="48" height="48" fill="white"/>
+  
+  <rect x="48" y="48" width="32" height="32" fill="black"/>
+  <rect x="176" y="48" width="32" height="32" fill="black"/>
+  <rect x="48" y="176" width="32" height="32" fill="black"/>
+  
+  <!-- Pattern dots -->
+  <rect x="112" y="48" width="8" height="8" fill="black"/>
+  <rect x="128" y="48" width="8" height="8" fill="black"/>
+  <rect x="144" y="48" width="8" height="8" fill="black"/>
+  <rect x="112" y="64" width="8" height="8" fill="black"/>
+  <rect x="144" y="64" width="8" height="8" fill="black"/>
+  <rect x="112" y="80" width="8" height="8" fill="black"/>
+  <rect x="128" y="80" width="8" height="8" fill="black"/>
+  <rect x="144" y="80" width="8" height="8" fill="black"/>
+  
+  <rect x="112" y="112" width="8" height="8" fill="black"/>
+  <rect x="128" y="112" width="8" height="8" fill="black"/>
+  <rect x="144" y="112" width="8" height="8" fill="black"/>
+  <rect x="112" y="128" width="8" height="8" fill="black"/>
+  <rect x="144" y="128" width="8" height="8" fill="black"/>
+  <rect x="112" y="144" width="8" height="8" fill="black"/>
+  <rect x="128" y="144" width="8" height="8" fill="black"/>
+  <rect x="144" y="144" width="8" height="8" fill="black"/>
+  
+  <rect x="176" y="112" width="8" height="8" fill="black"/>
+  <rect x="192" y="112" width="8" height="8" fill="black"/>
+  <rect x="208" y="112" width="8" height="8" fill="black"/>
+  <rect x="176" y="128" width="8" height="8" fill="black"/>
+  <rect x="208" y="128" width="8" height="8" fill="black"/>
+  <rect x="176" y="144" width="8" height="8" fill="black"/>
+  <rect x="192" y="144" width="8" height="8" fill="black"/>
+  <rect x="208" y="144" width="8" height="8" fill="black"/>
+</svg>

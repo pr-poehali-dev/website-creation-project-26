@@ -13,7 +13,7 @@ const QRCode: React.FC<QRCodeProps> = ({ onShowModal }) => {
         onClick={onShowModal}
       >
         <img 
-          src="https://cdn.poehali.dev/files/2d351452-3abb-4f41-8daa-51aa366a4776.jpeg" 
+          src="/qr-code.svg" 
           alt="QR код" 
           className="w-full h-full object-contain"
         />
