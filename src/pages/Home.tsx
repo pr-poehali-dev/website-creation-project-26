@@ -58,7 +58,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white relative overflow-hidden flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white relative overflow-hidden flex flex-col p-4">
       {/* Background geometric shapes */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Large squares */}
@@ -83,13 +83,13 @@ const Home = () => {
         <div className="geometric-shape w-18 h-18 bg-blue-300 bottom-10 right-5 transform rotate-45 animate-float-geometric-delay-1"></div>
       </div>
 
-      {/* Main content */}
-      <div className="relative z-10 text-center mb-16">
-        <div className="flex flex-col items-center">
+      {/* Main content - centered vertically and horizontally */}
+      <div className="relative z-10 flex-1 flex items-center justify-center">
+        <div className="text-center">
           <h1 className="text-5xl md:text-7xl font-black tracking-wider mb-2 animate-pulse-soft text-slate-800">
             IMPERIA
           </h1>
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center justify-center gap-4 mb-4">
             <div className="w-16 h-0.5 bg-slate-700"></div>
             <h2 className="text-2xl md:text-4xl font-normal tracking-[0.3em] animate-pulse-soft-delay text-slate-700">
               PROMO
@@ -99,8 +99,8 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Button */}
-      <div className="relative z-10">
+      {/* Button - positioned at bottom center */}
+      <div className="relative z-10 flex justify-center pb-8">
         <Button
           onClick={handleNewLead}
           disabled={isGettingLocation}
