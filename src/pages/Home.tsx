@@ -85,16 +85,18 @@ const Home = () => {
 
       {/* Main content */}
       <div className="relative z-10 text-center mb-16">
-        <h1 className="text-6xl md:text-8xl font-bold mb-4 animate-pulse-soft">
-          <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 bg-clip-text text-transparent drop-shadow-sm">
+        <div className="flex flex-col items-center">
+          <h1 className="text-5xl md:text-7xl font-black tracking-wider mb-2 animate-pulse-soft text-slate-800">
             IMPERIA
-          </span>
-        </h1>
-        <h2 className="text-4xl md:text-6xl font-bold animate-pulse-soft-delay">
-          <span className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 bg-clip-text text-transparent drop-shadow-sm">
-            PROMO
-          </span>
-        </h2>
+          </h1>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-16 h-0.5 bg-slate-700"></div>
+            <h2 className="text-2xl md:text-4xl font-normal tracking-[0.3em] animate-pulse-soft-delay text-slate-700">
+              PROMO
+            </h2>
+            <div className="w-16 h-0.5 bg-slate-700"></div>
+          </div>
+        </div>
       </div>
 
       {/* Button */}
