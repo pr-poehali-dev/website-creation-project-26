@@ -59,14 +59,31 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 relative overflow-hidden flex flex-col p-4">
-      {/* Space background with stars */}
+      {/* Space background with natural starfield */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Stars */}
-        {Array.from({ length: 150 }, (_, i) => {
-          const left = (i * 7) % 100;
-          const top = (i * 11) % 100;
-          const size = Math.random() > 0.8 ? 'w-1 h-1' : 'w-0.5 h-0.5';
-          const opacity = 0.3 + Math.random() * 0.7;
+        {/* Static stars */}
+        {Array.from({ length: 200 }, (_, i) => {
+          const left = Math.random() * 100;
+          const top = Math.random() * 100;
+          const sizeType = Math.random();
+          let size, brightness, twinkleSpeed;
+          
+          if (sizeType < 0.7) {
+            // Tiny stars (70%)
+            size = 'w-px h-px';
+            brightness = 0.4 + Math.random() * 0.4;
+            twinkleSpeed = 3 + Math.random() * 4;
+          } else if (sizeType < 0.9) {
+            // Small stars (20%)
+            size = 'w-0.5 h-0.5';
+            brightness = 0.6 + Math.random() * 0.3;
+            twinkleSpeed = 2 + Math.random() * 3;
+          } else {
+            // Bright stars (10%)
+            size = 'w-1 h-1';
+            brightness = 0.8 + Math.random() * 0.2;
+            twinkleSpeed = 1.5 + Math.random() * 2;
+          }
           
           return (
             <div
@@ -75,8 +92,30 @@ const Home = () => {
               style={{
                 left: `${left}%`,
                 top: `${top}%`,
-                opacity,
-                animation: `twinkle ${2 + Math.random() * 3}s infinite`
+                opacity: brightness,
+                animation: `twinkle ${twinkleSpeed}s infinite`,
+                animationDelay: `${Math.random() * 3}s`,
+                boxShadow: sizeType > 0.95 ? '0 0 4px rgba(255,255,255,0.8)' : 'none'
+              }}
+            />
+          );
+        })}
+
+        {/* Shooting stars */}
+        {Array.from({ length: 5 }, (_, i) => {
+          const startDelay = Math.random() * 10;
+          const duration = 1 + Math.random() * 2;
+          
+          return (
+            <div
+              key={`shooting-${i}`}
+              className="absolute w-0.5 h-0.5 bg-white rounded-full shooting-star opacity-0"
+              style={{
+                left: `${10 + Math.random() * 80}%`,
+                top: `${10 + Math.random() * 30}%`,
+                animation: `shooting-star ${duration}s linear infinite`,
+                animationDelay: `${startDelay}s`,
+                boxShadow: '0 0 6px rgba(255,255,255,1), 0 0 12px rgba(173,216,230,0.8)'
               }}
             />
           );
