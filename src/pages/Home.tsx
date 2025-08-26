@@ -32,7 +32,6 @@ const Home = () => {
         );
       });
 
-      // Сохраняем геолокацию в localStorage для использования на странице записи
       localStorage.setItem('userLocation', JSON.stringify({
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
@@ -44,7 +43,6 @@ const Home = () => {
         description: "Переходим к записи видео",
       });
 
-      // Переходим на страницу записи видео
       navigate('/record');
       
     } catch (error) {
@@ -60,42 +58,66 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-blue-100 flex flex-col items-center justify-center p-4">
-      {/* Пульсирующий заголовок */}
-      <div className="text-center mb-16">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white relative overflow-hidden flex flex-col items-center justify-center p-4">
+      {/* Background geometric shapes */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Large squares */}
+        <div className="geometric-shape w-32 h-32 bg-blue-200 top-10 left-10 transform rotate-45 animate-float-geometric"></div>
+        <div className="geometric-shape w-24 h-24 bg-blue-300 top-20 right-20 transform rotate-12 animate-float-geometric-delay-1"></div>
+        <div className="geometric-shape w-40 h-40 bg-blue-100 bottom-20 left-16 transform -rotate-45 animate-float-geometric-reverse"></div>
+        
+        {/* Medium rectangles */}
+        <div className="geometric-shape w-20 h-32 bg-blue-250 top-1/3 right-10 transform rotate-30 animate-float-geometric-delay-2"></div>
+        <div className="geometric-shape w-28 h-20 bg-blue-200 bottom-1/3 right-1/4 transform -rotate-12 animate-float-geometric"></div>
+        
+        {/* Small diamonds */}
+        <div className="geometric-shape w-16 h-16 bg-blue-300 top-1/2 left-5 transform rotate-45 animate-float-geometric-reverse"></div>
+        <div className="geometric-shape w-12 h-12 bg-blue-200 top-3/4 right-8 transform rotate-45 animate-float-geometric-delay-1"></div>
+        
+        {/* Additional geometric elements */}
+        <div className="geometric-shape w-36 h-18 bg-blue-150 top-40 left-1/3 transform rotate-60 animate-float-geometric-delay-2"></div>
+        <div className="geometric-shape w-22 h-22 bg-blue-250 bottom-40 left-1/4 transform -rotate-30 animate-float-geometric"></div>
+        
+        {/* Corner elements */}
+        <div className="geometric-shape w-28 h-28 bg-blue-100 top-5 right-1/3 transform rotate-45 animate-float-geometric-reverse"></div>
+        <div className="geometric-shape w-18 h-18 bg-blue-300 bottom-10 right-5 transform rotate-45 animate-float-geometric-delay-1"></div>
+      </div>
+
+      {/* Main content */}
+      <div className="relative z-10 text-center mb-16">
         <h1 className="text-6xl md:text-8xl font-bold mb-4 animate-pulse-soft">
-          <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 bg-clip-text text-transparent drop-shadow-sm">
             IMPERIA
           </span>
         </h1>
         <h2 className="text-4xl md:text-6xl font-bold animate-pulse-soft-delay">
-          <span className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 bg-clip-text text-transparent drop-shadow-sm">
             PROMO
           </span>
         </h2>
       </div>
 
-      {/* Кнопка "Новый лид" */}
-      <Button
-        onClick={handleNewLead}
-        disabled={isGettingLocation}
-        size="lg"
-        className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-xl px-12 py-6 rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isGettingLocation ? (
-          <div className="flex items-center gap-3">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-            Получение местоположения...
-          </div>
-        ) : (
-          'Новый лид'
-        )}
-      </Button>
+      {/* Button */}
+      <div className="relative z-10">
+        <Button
+          onClick={handleNewLead}
+          disabled={isGettingLocation}
+          size="lg"
+          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-xl px-12 py-6 rounded-2xl shadow-2xl transform transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-400/20"
+        >
+          {isGettingLocation ? (
+            <div className="flex items-center gap-3">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              Получение местоположения...
+            </div>
+          ) : (
+            'Новый лид'
+          )}
+        </Button>
+      </div>
 
-      {/* Декоративные элементы */}
-      <div className="absolute top-10 left-10 w-20 h-20 bg-blue-400 rounded-full blur-xl opacity-20 animate-bounce-slow"></div>
-      <div className="absolute bottom-10 right-10 w-32 h-32 bg-blue-500 rounded-full blur-xl opacity-20 animate-bounce-slow-delay"></div>
-      <div className="absolute top-1/2 left-5 w-16 h-16 bg-blue-300 rounded-full blur-xl opacity-20 animate-bounce-slow-delay-2"></div>
+      {/* Subtle overlay geometric pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-50/30 to-transparent pointer-events-none"></div>
     </div>
   );
 };
