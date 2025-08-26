@@ -1,33 +1,279 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
-import CameraView from '@/components/CameraView';
-import ShareButtons from '@/components/ShareButtons';
-import QRModal from '@/components/QRModal';
-import { useVideoRecording } from '@/hooks/useVideoRecording';
-import { sendToTelegram } from '@/utils/telegramShare';
 
 const Index = () => {
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedVideo, setRecordedVideo] = useState<string | null>(null);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [stream, setStream] = useState<MediaStream | null>(null);
   const [showQRModal, setShowQRModal] = useState(false);
   
-  const {
-    isRecording,
-    recordedVideo,
-    recordingTime,
-    stream,
-    videoRef,
-    startRecording,
-    stopRecording,
-    formatTime,
-    MAX_RECORDING_TIME
-  } = useVideoRecording();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleSendToTelegram = () => {
-    if (recordedVideo) {
-      sendToTelegram(recordedVideo);
+  const MAX_RECORDING_TIME = 300; // 5 minutes in seconds
+
+  useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [stream]);
+
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          width: { ideal: 480 },
+          height: { ideal: 360 },
+          frameRate: { ideal: 15 },
+          facingMode: 'environment'
+        }, 
+        audio: true 
+      });
+      
+      setStream(mediaStream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+      }
+    } catch (error) {
+      console.error('Ошибка доступа к камере:', error);
+      alert('Не удалось получить доступ к камере. Проверьте разрешения.');
     }
   };
+
+  const startRecording = async () => {
+    // If no stream, request camera and microphone permissions first
+    if (!stream) {
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            width: { ideal: 480 },
+            height: { ideal: 360 },
+            frameRate: { ideal: 15 },
+            facingMode: 'environment'
+          }, 
+          audio: true 
+        });
+        
+        setStream(mediaStream);
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+        }
+        
+        // Wait a moment for video to load
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Now start recording with the new stream
+        startRecordingWithStream(mediaStream);
+      } catch (error) {
+        console.error('Ошибка доступа к камере:', error);
+        alert('Не удалось получить доступ к камере и микрофону. Проверьте разрешения.');
+        return;
+      }
+    } else {
+      // Stream exists, start recording immediately
+      startRecordingWithStream(stream);
+    }
+  };
+
+  const startRecordingWithStream = (mediaStream: MediaStream) => {
+    setRecordedVideo(null);
+    chunksRef.current = [];
+    
+    let mediaRecorder;
+    try {
+      // Try MP4 format first
+      mediaRecorder = new MediaRecorder(mediaStream, {
+        mimeType: 'video/mp4'
+      });
+    } catch (e) {
+      try {
+        // Fallback to webm with H.264 if available
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/webm;codecs=h264'
+        });
+      } catch (e2) {
+        // Final fallback to default webm
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/webm;codecs=vp8,opus'
+        });
+      }
+    }
+    
+    mediaRecorderRef.current = mediaRecorder;
+    
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        chunksRef.current.push(event.data);
+      }
+    };
+    
+    mediaRecorder.onstop = () => {
+      // Determine the correct MIME type based on what was actually recorded
+      const mimeType = mediaRecorderRef.current?.mimeType || 'video/mp4';
+      const blob = new Blob(chunksRef.current, { type: mimeType });
+      const videoURL = URL.createObjectURL(blob);
+      setRecordedVideo(videoURL);
+    };
+    
+    mediaRecorder.start();
+    setIsRecording(true);
+    setRecordingTime(0);
+    
+    // Start timer
+    timerRef.current = setInterval(() => {
+      setRecordingTime(prev => {
+        if (prev >= MAX_RECORDING_TIME - 1) {
+          stopRecording();
+          return MAX_RECORDING_TIME;
+        }
+        return prev + 1;
+      });
+    }, 1000);
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+  };
+
+
+
+
+
+
+
+  const sendToTelegram = async () => {
+    if (!recordedVideo) return;
+    
+    try {
+      // Convert blob to file for sharing
+      const response = await fetch(recordedVideo);
+      const blob = await response.blob();
+      const mimeType = blob.type || 'video/mp4';
+      const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
+      const file = new File([blob], `video_${Date.now()}.${extension}`, { type: mimeType });
+      
+      // Get user location
+      let locationText = '';
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 60000
+          });
+        });
+        
+        const { latitude, longitude } = position.coords;
+        locationText = `\n\n📍 Местоположение: https://maps.google.com/maps?q=${latitude},${longitude}`;
+      } catch (locationError) {
+        console.log('Не удалось получить геолокацию:', locationError);
+      }
+      
+      const shareText = locationText;
+
+      // Check if Web Share API is available
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Моё видео',
+          text: shareText,
+          files: [file]
+        });
+        // Navigate to success page
+        window.location.href = '/success';
+      } else {
+        // Fallback: open Telegram with text
+        const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareText)}`;
+        window.open(telegramUrl, '_blank');
+        // Navigate to success page
+        setTimeout(() => {
+          window.location.href = '/success';
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Ошибка отправки:', error);
+      alert('Ошибка отправки видео. Попробуйте ещё раз.');
+    }
+  };
+
+  const sendToWhatsApp = async () => {
+    if (!recordedVideo) return;
+    
+    try {
+      // Convert blob to file for sharing
+      const response = await fetch(recordedVideo);
+      const blob = await response.blob();
+      const mimeType = blob.type || 'video/mp4';
+      const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
+      const file = new File([blob], `video_${Date.now()}.${extension}`, { type: mimeType });
+      
+      // Get user location
+      let locationText = '';
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 60000
+          });
+        });
+        
+        const { latitude, longitude } = position.coords;
+        locationText = `\n\n📍 Местоположение: https://maps.google.com/maps?q=${latitude},${longitude}`;
+      } catch (locationError) {
+        console.log('Не удалось получить геолокацию:', locationError);
+      }
+      
+      const shareText = locationText;
+
+      // Check if Web Share API is available
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Моё видео',
+          text: shareText,
+          files: [file]
+        });
+        // Navigate to success page
+        window.location.href = '/success';
+      } else {
+        // Fallback: open WhatsApp with text
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+        window.open(whatsappUrl, '_blank');
+        // Navigate to success page
+        setTimeout(() => {
+          window.location.href = '/success';
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Ошибка отправки:', error);
+      alert('Ошибка отправки видео. Попробуйте ещё раз.');
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Remove auto-start camera effect
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -59,15 +305,46 @@ const Index = () => {
             <div className="flex-1 flex flex-col">
               
               {/* Video Display */}
-              <CameraView
-                recordedVideo={recordedVideo}
-                stream={stream}
-                videoRef={videoRef}
-                isRecording={isRecording}
-                recordingTime={recordingTime}
-                maxRecordingTime={MAX_RECORDING_TIME}
-                formatTime={formatTime}
-              />
+              <div className="relative bg-black rounded-xl overflow-hidden mb-6 aspect-video">
+                {recordedVideo ? (
+                  <video
+                    src={recordedVideo}
+                    controls
+                    className="w-full h-full object-cover"
+                  />
+                ) : stream ? (
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white">
+                    <div className="text-center">
+                      <Icon name="Video" size={48} className="mx-auto mb-4 opacity-50" />
+                      <p className="text-lg font-medium">Нажмите кнопку для записи</p>
+                      <p className="text-sm opacity-75 mt-2">Потребуется доступ к камере и микрофону</p>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Recording Indicator */}
+                {isRecording && (
+                  <div className="absolute top-4 left-4 flex items-center gap-2 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    REC {formatTime(recordingTime)}
+                  </div>
+                )}
+                
+                {/* Max Time Indicator */}
+                {isRecording && (
+                  <div className="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded text-sm">
+                    {formatTime(MAX_RECORDING_TIME - recordingTime)} осталось
+                  </div>
+                )}
+              </div>
 
               {/* Controls */}
               <div className="space-y-4">
@@ -90,16 +367,32 @@ const Index = () => {
                     </Button>
                   </div>
                 ) : (
-                  <ShareButtons
-                    recordedVideo={recordedVideo}
-                    onSendToTelegram={handleSendToTelegram}
-                  />
+                  <div className="space-y-3">
+                    {/* Share Buttons */}
+                    <div className="flex gap-3 justify-center flex-wrap">
+                      <Button
+                        onClick={sendToTelegram}
+                        className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white"
+                      >
+                        <Icon name="Send" size={18} />
+                        Отправить в Telegram
+                      </Button>
+                      
+                      <Button
+                        onClick={sendToWhatsApp}
+                        className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white"
+                      >
+                        <Icon name="MessageCircle" size={18} />
+                        Отправить в WhatsApp
+                      </Button>
+                    </div>
+                  </div>
                 )}
               </div>
 
               {/* Video Info */}
               <div className="mt-6 text-center text-sm text-gray-500">
-                <p>Формат: WebM • Качество: 360p • Максимум: 5 минут • Тыловая камера</p>
+                <p>Формат: MP4 • Качество: 360p • Максимум: 5 минут • Тыловая камера</p>
                 {recordingTime > 0 && !isRecording && (
                   <p className="mt-1">Длительность: {formatTime(recordingTime)}</p>
                 )}
@@ -112,10 +405,34 @@ const Index = () => {
       </div>
 
       {/* QR Code Modal */}
-      <QRModal
-        showQRModal={showQRModal}
-        onClose={() => setShowQRModal(false)}
-      />
+      {showQRModal && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowQRModal(false)}
+        >
+          <div className="relative max-w-2xl max-h-[90vh] bg-white rounded-2xl p-6">
+            <button
+              onClick={() => setShowQRModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+            >
+              <Icon name="X" size={16} className="text-gray-600" />
+            </button>
+            <div className="flex flex-col items-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">QR-код</h2>
+              <div className="w-full max-w-md aspect-square">
+                <img 
+                  src="https://cdn.poehali.dev/files/2d351452-3abb-4f41-8daa-51aa366a4776.jpeg" 
+                  alt="QR код" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <p className="mt-4 text-lg text-gray-700 text-center">
+                Отсканируйте этот код камерой смартфона
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
