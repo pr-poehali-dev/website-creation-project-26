@@ -9,7 +9,6 @@ const Index = () => {
   const [recordingTime, setRecordingTime] = useState(0);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [showQRModal, setShowQRModal] = useState(false);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -156,56 +155,14 @@ const Index = () => {
 
 
 
-  const saveVideo = () => {
-    if (!recordedVideo) return;
-    
-    const a = document.createElement('a');
-    a.href = recordedVideo;
-    // Determine file extension based on blob type
-    const videoBlob = recordedVideo.startsWith('blob:') ? recordedVideo : recordedVideo;
-    const extension = videoBlob.includes('mp4') ? 'mp4' : 'webm';
-    a.download = `video_${Date.now()}.${extension}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
 
-  const getUserLocation = () => {
-    return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error('Геолокация не поддерживается'));
-        return;
-      }
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-        },
-        (error) => {
-          reject(error);
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
-      );
-    });
-  };
+
 
   const sendToTelegram = async () => {
     if (!recordedVideo) return;
     
     try {
-      // Get user location
-      let locationText = '';
-      try {
-        const location = await getUserLocation();
-        setUserLocation(location);
-        locationText = `\n\n📍 Местоположение: https://maps.google.com/maps?q=${location.lat},${location.lng}`;
-      } catch (error) {
-        console.log('Не удалось получить местоположение:', error);
-      }
-
       // Convert blob to file for sharing
       const response = await fetch(recordedVideo);
       const blob = await response.blob();
@@ -213,7 +170,7 @@ const Index = () => {
       const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
       const file = new File([blob], `video_${Date.now()}.${extension}`, { type: mimeType });
       
-      const shareText = `Посмотрите моё видео!${locationText}`;
+      const shareText = `Посмотрите моё видео!`;
 
       // Check if Web Share API is available
       if (navigator.share) {
@@ -222,34 +179,57 @@ const Index = () => {
           text: shareText,
           files: [file]
         });
+        // Navigate to success page
+        window.location.href = '/success';
       } else {
-        // Fallback: create a downloadable link and suggest manual sharing
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `video_${Date.now()}.${extension}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        // Copy location to clipboard if available
-        if (locationText && navigator.clipboard) {
-          try {
-            await navigator.clipboard.writeText(shareText);
-            alert('Видео сохранено! Текст с местоположением скопирован в буфер обмена. Откройте Telegram и прикрепите файл.');
-          } catch (clipboardError) {
-            alert(`Видео сохранено! \n\nСкопируйте этот текст: ${shareText}`);
-          }
-        } else {
-          alert('Видео сохранено! Откройте Telegram и прикрепите файл.');
-        }
+        // Fallback: open Telegram with text
+        const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareText)}`;
+        window.open(telegramUrl, '_blank');
+        // Navigate to success page
+        setTimeout(() => {
+          window.location.href = '/success';
+        }, 1000);
       }
     } catch (error) {
       console.error('Ошибка отправки:', error);
-      // Fallback to download
-      saveVideo();
-      alert('Видео сохранено в галерею. Откройте Telegram и прикрепите файл.');
+      alert('Ошибка отправки видео. Попробуйте ещё раз.');
+    }
+  };
+
+  const sendToWhatsApp = async () => {
+    if (!recordedVideo) return;
+    
+    try {
+      // Convert blob to file for sharing
+      const response = await fetch(recordedVideo);
+      const blob = await response.blob();
+      const mimeType = blob.type || 'video/mp4';
+      const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
+      const file = new File([blob], `video_${Date.now()}.${extension}`, { type: mimeType });
+      
+      const shareText = `Посмотрите моё видео!`;
+
+      // Check if Web Share API is available
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Моё видео',
+          text: shareText,
+          files: [file]
+        });
+        // Navigate to success page
+        window.location.href = '/success';
+      } else {
+        // Fallback: open WhatsApp with text
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+        window.open(whatsappUrl, '_blank');
+        // Navigate to success page
+        setTimeout(() => {
+          window.location.href = '/success';
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Ошибка отправки:', error);
+      alert('Ошибка отправки видео. Попробуйте ещё раз.');
     }
   };
 
@@ -354,25 +334,22 @@ const Index = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {/* Action Buttons */}
-                    <div className="flex justify-center">
-                      <Button
-                        onClick={saveVideo}
-                        className="flex items-center gap-2 bg-primary hover:bg-primary/90"
-                      >
-                        <Icon name="Download" size={18} />
-                        Сохранить
-                      </Button>
-                    </div>
-                    
-                    {/* Telegram Button */}
-                    <div className="flex justify-center">
+                    {/* Share Buttons */}
+                    <div className="flex gap-3 justify-center flex-wrap">
                       <Button
                         onClick={sendToTelegram}
                         className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white"
                       >
                         <Icon name="Send" size={18} />
                         Отправить в Telegram
+                      </Button>
+                      
+                      <Button
+                        onClick={sendToWhatsApp}
+                        className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white"
+                      >
+                        <Icon name="MessageCircle" size={18} />
+                        Отправить в WhatsApp
                       </Button>
                     </div>
                   </div>
