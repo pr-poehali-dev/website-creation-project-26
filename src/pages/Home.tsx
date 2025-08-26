@@ -61,6 +61,43 @@ const Home = () => {
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-black relative overflow-hidden flex flex-col p-4">
       {/* Enhanced space background */}
       <div className="absolute inset-0 overflow-hidden">
+        
+        {/* Плавно падающие светящиеся звёзды */}
+        {Array.from({ length: 5 }, (_, i) => {
+          const startX = 10 + Math.random() * 80;
+          const startY = -10;
+          const duration = 8 + Math.random() * 6; // 8-14 секунд
+          const delay = Math.random() * 20; // случайная задержка до 20 сек
+          const size = 0.8 + Math.random() * 0.8; // размер 0.8-1.6
+          
+          return (
+            <div 
+              key={`falling-star-${i}`}
+              className="absolute" 
+              style={{
+                left: `${startX}%`,
+                top: `${startY}%`,
+                animation: `gentle-fall ${duration}s ease-in-out infinite`,
+                animationDelay: `${delay}s`
+              }}
+            >
+              <div 
+                className="bg-white rounded-full opacity-90"
+                style={{
+                  width: `${size * 4}px`,
+                  height: `${size * 4}px`,
+                  boxShadow: `
+                    0 0 ${size * 8}px rgba(255, 255, 255, 0.8),
+                    0 0 ${size * 16}px rgba(255, 255, 255, 0.4),
+                    0 0 ${size * 24}px rgba(255, 255, 255, 0.2)
+                  `,
+                  filter: 'blur(0.5px)'
+                }}
+              />
+            </div>
+          );
+        })}
+        
         {/* Static stars with center drift effect */}
         {/* Все звёзды удалены */}
         {false && Array.from({ length: 0 }, (_, i) => {
