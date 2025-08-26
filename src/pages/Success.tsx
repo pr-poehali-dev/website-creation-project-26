@@ -5,10 +5,11 @@ import Icon from '@/components/ui/icon';
 
 const Success = () => {
   const createNewLead = () => {
-    // Clear any stored video data and refresh the page
+    // Clear any stored video data
     sessionStorage.clear();
+    
+    // Navigate to home page
     window.location.href = '/';
-    window.location.reload();
   };
 
   return (
