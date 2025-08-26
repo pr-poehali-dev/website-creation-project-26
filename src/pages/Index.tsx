@@ -6,7 +6,6 @@ import CameraView from '@/components/CameraView';
 import ShareButtons from '@/components/ShareButtons';
 import QRModal from '@/components/QRModal';
 import { useVideoRecording } from '@/hooks/useVideoRecording';
-import { sendToTelegram, sendToWhatsApp } from '@/utils/shareUtils';
 
 const Index = () => {
   const [showQRModal, setShowQRModal] = useState(false);
@@ -22,14 +21,6 @@ const Index = () => {
     formatTime,
     MAX_RECORDING_TIME
   } = useVideoRecording();
-
-  const handleSendToTelegram = () => {
-    sendToTelegram(recordedVideo!);
-  };
-
-  const handleSendToWhatsApp = () => {
-    sendToWhatsApp(recordedVideo!);
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -94,8 +85,6 @@ const Index = () => {
                 ) : (
                   <ShareButtons
                     recordedVideo={recordedVideo}
-                    onSendToTelegram={handleSendToTelegram}
-                    onSendToWhatsApp={handleSendToWhatsApp}
                   />
                 )}
               </div>
