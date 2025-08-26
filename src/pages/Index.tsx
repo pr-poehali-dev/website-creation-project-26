@@ -115,45 +115,28 @@ const Index = () => {
     });
     
     let mediaRecorder;
-    const isAndroid = /Android/i.test(navigator.userAgent);
     
     try {
-      if (isAndroid) {
-        // Android-specific codec configuration
-        if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
-          mediaRecorder = new MediaRecorder(mediaStream, {
-            mimeType: 'video/webm;codecs=vp8,opus',
-            audioBitsPerSecond: 128000,
-            videoBitsPerSecond: 2500000
-          });
-        } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac')) {
-          mediaRecorder = new MediaRecorder(mediaStream, {
-            mimeType: 'video/mp4;codecs=h264,aac',
-            audioBitsPerSecond: 128000,
-            videoBitsPerSecond: 2500000
-          });
-        } else {
-          // Default for Android
-          mediaRecorder = new MediaRecorder(mediaStream, {
-            audioBitsPerSecond: 128000,
-            videoBitsPerSecond: 2500000
-          });
-        }
+      // Try MP4 first (preferred format)
+      if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac')) {
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/mp4;codecs=h264,aac',
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 2500000
+        });
+      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/mp4',
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 2500000
+        });
       } else {
-        // Desktop/other devices
-        if (MediaRecorder.isTypeSupported('video/mp4')) {
-          mediaRecorder = new MediaRecorder(mediaStream, {
-            mimeType: 'video/mp4'
-          });
-        } else if (MediaRecorder.isTypeSupported('video/webm;codecs=h264,opus')) {
-          mediaRecorder = new MediaRecorder(mediaStream, {
-            mimeType: 'video/webm;codecs=h264,opus'
-          });
-        } else {
-          mediaRecorder = new MediaRecorder(mediaStream, {
-            mimeType: 'video/webm;codecs=vp8,opus'
-          });
-        }
+        // If MP4 is not supported, use default format
+        console.warn('MP4 not supported, using default format');
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 2500000
+        });
       }
       
       console.log('MediaRecorder created with mimeType:', mediaRecorder.mimeType);
