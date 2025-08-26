@@ -59,28 +59,35 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white relative overflow-hidden flex flex-col p-4">
-      {/* Background geometric shapes */}
+      {/* Background geometric shapes - hundreds of small cubes */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Large squares */}
-        <div className="geometric-shape w-32 h-32 bg-blue-500 top-10 left-10 transform rotate-45 animate-float-geometric"></div>
-        <div className="geometric-shape w-24 h-24 bg-blue-600 top-20 right-20 transform rotate-12 animate-float-geometric-delay-1"></div>
-        <div className="geometric-shape w-40 h-40 bg-blue-400 bottom-20 left-16 transform -rotate-45 animate-float-geometric-reverse"></div>
-        
-        {/* Medium rectangles */}
-        <div className="geometric-shape w-20 h-32 bg-slate-700 top-1/3 right-10 transform rotate-30 animate-float-geometric-delay-2"></div>
-        <div className="geometric-shape w-28 h-20 bg-blue-500 bottom-1/3 right-1/4 transform -rotate-12 animate-float-geometric"></div>
-        
-        {/* Small diamonds */}
-        <div className="geometric-shape w-16 h-16 bg-blue-600 top-1/2 left-5 transform rotate-45 animate-float-geometric-reverse"></div>
-        <div className="geometric-shape w-12 h-12 bg-slate-800 top-3/4 right-8 transform rotate-45 animate-float-geometric-delay-1"></div>
-        
-        {/* Additional geometric elements */}
-        <div className="geometric-shape w-36 h-18 bg-blue-400 top-40 left-1/3 transform rotate-60 animate-float-geometric-delay-2"></div>
-        <div className="geometric-shape w-22 h-22 bg-slate-700 bottom-40 left-1/4 transform -rotate-30 animate-float-geometric"></div>
-        
-        {/* Corner elements */}
-        <div className="geometric-shape w-28 h-28 bg-blue-500 top-5 right-1/3 transform rotate-45 animate-float-geometric-reverse"></div>
-        <div className="geometric-shape w-18 h-18 bg-blue-700 bottom-10 right-5 transform rotate-45 animate-float-geometric-delay-1"></div>
+        {Array.from({ length: 200 }, (_, i) => {
+          const colors = ['bg-blue-400', 'bg-blue-500', 'bg-blue-600', 'bg-slate-600', 'bg-slate-700', 'bg-slate-800'];
+          const sizes = ['w-2 h-2', 'w-3 h-3', 'w-4 h-4'];
+          const animations = ['animate-float-geometric', 'animate-float-geometric-delay-1', 'animate-float-geometric-delay-2', 'animate-float-geometric-reverse'];
+          const rotations = ['rotate-0', 'rotate-12', 'rotate-45', '-rotate-12', '-rotate-45'];
+          
+          const color = colors[i % colors.length];
+          const size = sizes[i % sizes.length];
+          const animation = animations[i % animations.length];
+          const rotation = rotations[i % rotations.length];
+          
+          const left = (i * 7) % 100;
+          const top = (i * 11) % 100;
+          
+          return (
+            <div
+              key={i}
+              className={`geometric-shape ${size} ${color} transform ${rotation} ${animation}`}
+              style={{
+                position: 'absolute',
+                left: `${left}%`,
+                top: `${top}%`,
+                opacity: 0.6 + (i % 4) * 0.1
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* Main content - centered vertically and horizontally */}
