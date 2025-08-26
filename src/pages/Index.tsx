@@ -412,8 +412,20 @@ const Index = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {/* Share Button */}
-                    <div className="flex justify-center">
+                    {/* Action Buttons */}
+                    <div className="flex justify-center gap-4">
+                      <Button
+                        onClick={() => {
+                          setRecordedVideo(null);
+                          setRecordingTime(0);
+                        }}
+                        variant="outline"
+                        className="flex items-center gap-2 px-6 py-3"
+                        size="lg"
+                      >
+                        <Icon name="RotateCcw" size={20} />
+                        Пересъемка
+                      </Button>
                       <Button
                         onClick={shareVideo}
                         className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3"
