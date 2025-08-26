@@ -2,12 +2,12 @@ import React from 'react';
 import Icon from '@/components/ui/icon';
 
 interface QRModalProps {
-  showQRModal: boolean;
+  isOpen: boolean;
   onClose: () => void;
 }
 
-const QRModal: React.FC<QRModalProps> = ({ showQRModal, onClose }) => {
-  if (!showQRModal) return null;
+const QRModal: React.FC<QRModalProps> = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
 
   return (
     <div 
