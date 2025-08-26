@@ -187,7 +187,7 @@ const Index = () => {
         console.log('Не удалось получить геолокацию:', locationError);
       }
       
-      const shareText = `Посмотрите моё видео!${locationText}`;
+      const shareText = locationText;
 
       // Check if Web Share API is available
       if (navigator.share) {
@@ -241,7 +241,7 @@ const Index = () => {
         console.log('Не удалось получить геолокацию:', locationError);
       }
       
-      const shareText = `Посмотрите моё видео!${locationText}`;
+      const shareText = locationText;
 
       // Check if Web Share API is available
       if (navigator.share) {
