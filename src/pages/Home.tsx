@@ -105,7 +105,7 @@ const Home = () => {
           onClick={handleNewLead}
           disabled={isGettingLocation}
           size="lg"
-          className="animate-gradient-shimmer text-white text-xl px-12 py-6 rounded-none shadow-2xl transform transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-600/20 font-bold tracking-wide uppercase"
+          className="animate-gradient-shimmer text-white text-xl px-12 py-6 rounded-2xl shadow-2xl transform transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-600/20 font-bold tracking-wide uppercase"
         >
           {isGettingLocation ? (
             <div className="flex items-center gap-3">
