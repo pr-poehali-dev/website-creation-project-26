@@ -64,10 +64,10 @@ const Home = () => {
         
         {/* Диагонально падающие светящиеся звёзды */}
         {Array.from({ length: 5 }, (_, i) => {
-          const startX = -5 + Math.random() * 30; // стартуют из левой части
-          const startY = -5 + Math.random() * 20; // стартуют из верхней части
-          const duration = 8 + Math.random() * 6; // 8-14 секунд
-          const delay = Math.random() * 20; // случайная задержка до 20 сек
+          const startX = 0 + Math.random() * 40; // стартуют из левой части экрана
+          const startY = 0 + Math.random() * 30; // стартуют из верхней части экрана
+          const duration = 3 + Math.random() * 3; // 3-6 секунд (быстрее)
+          const delay = Math.random() * 15; // случайная задержка до 15 сек
           const size = 0.8 + Math.random() * 0.8; // размер 0.8-1.6
           
           return (
