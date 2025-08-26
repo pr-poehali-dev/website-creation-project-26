@@ -25,7 +25,7 @@ const QRModal: React.FC<QRModalProps> = ({ isOpen, onClose }) => {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">QR-код</h2>
           <div className="w-full max-w-md aspect-square">
             <img 
-              src="/qr-code.svg" 
+              src="https://cdn.poehali.dev/files/50a676b2-67d0-4eaa-b841-46a55914c59a.jpeg" 
               alt="QR код" 
               className="w-full h-full object-contain"
             />
