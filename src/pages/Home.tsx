@@ -116,15 +116,15 @@ const Home = () => {
       {/* Main content - centered vertically and horizontally */}
       <div className="relative z-10 flex-1 flex items-center justify-center">
         <div className="text-center ml-1.5">
-          <h1 className="text-5xl md:text-7xl font-black tracking-wider mb-2 animate-pulse-soft text-slate-800">
+          <h1 className="text-5xl md:text-7xl font-black tracking-wider mb-2 animate-pulse-soft text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
             IMPERIA
           </h1>
           <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="w-16 h-0.5 bg-slate-700"></div>
-            <h2 className="text-2xl md:text-4xl font-normal tracking-[0.3em] animate-pulse-soft-delay text-slate-700">
+            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-blue-300 to-transparent opacity-80"></div>
+            <h2 className="text-2xl md:text-4xl font-normal tracking-[0.3em] animate-pulse-soft-delay text-blue-100 drop-shadow-[0_0_10px_rgba(147,197,253,0.8)]">
               PROMO
             </h2>
-            <div className="w-16 h-0.5 bg-slate-700"></div>
+            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-blue-300 to-transparent opacity-80"></div>
           </div>
         </div>
       </div>
@@ -135,7 +135,7 @@ const Home = () => {
           onClick={handleNewLead}
           disabled={isGettingLocation}
           size="default"
-          className="animate-gradient-shimmer text-white text-lg px-8 py-4 rounded-2xl shadow-2xl transform transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-600/20 font-bold tracking-wide uppercase"
+          className="bg-gradient-to-r from-blue-900/80 via-slate-800/80 to-blue-900/80 backdrop-blur-sm text-white text-lg px-8 py-4 rounded-2xl shadow-[0_0_25px_rgba(59,130,246,0.4)] transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_35px_rgba(59,130,246,0.6)] hover:from-blue-800/90 hover:via-slate-700/90 hover:to-blue-800/90 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-400/30 font-bold tracking-wide uppercase relative overflow-hidden group"
         >
           {isGettingLocation ? (
             <div className="flex items-center gap-3">
@@ -143,13 +143,14 @@ const Home = () => {
               Получение местоположения...
             </div>
           ) : (
-            'Новый лид'
+            <span className="relative z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">Новый лид</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
           )}
         </Button>
       </div>
 
-      {/* Subtle overlay geometric pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-50/30 to-transparent pointer-events-none"></div>
+      {/* Cosmic overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-900/10 to-transparent pointer-events-none"></div>
     </div>
   );
 };
