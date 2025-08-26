@@ -25,6 +25,20 @@
     animation: bounce-slow 6s ease-in-out infinite;
     animation-delay: 4s;
   }
+
+  .animate-gradient-shimmer {
+    background: linear-gradient(
+      45deg,
+      #000000,
+      #1e293b,
+      #1e40af,
+      #000000,
+      #1e293b,
+      #1e40af
+    );
+    background-size: 400% 400%;
+    animation: gradient-shimmer 3s ease-in-out infinite;
+  }
 }
 
 @keyframes pulse-soft {
@@ -46,6 +60,24 @@
   }
   50% {
     transform: translateY(-20px);
+  }
+}
+
+@keyframes gradient-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 
