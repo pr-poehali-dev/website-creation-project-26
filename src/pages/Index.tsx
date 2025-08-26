@@ -37,7 +37,13 @@ const Index = () => {
           frameRate: { ideal: 15 },
           facingMode: 'environment'
         }, 
-        audio: true 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          sampleRate: 44100,
+          channelCount: 2
+        }
       });
       
       setStream(mediaStream);
@@ -61,7 +67,13 @@ const Index = () => {
             frameRate: { ideal: 15 },
             facingMode: 'environment'
           }, 
-          audio: true 
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+            sampleRate: 44100,
+            channelCount: 2
+          }
         });
         
         setStream(mediaStream);
@@ -89,24 +101,48 @@ const Index = () => {
     setRecordedVideo(null);
     chunksRef.current = [];
     
+    // Check if we have audio tracks
+    const audioTracks = mediaStream.getAudioTracks();
+    const videoTracks = mediaStream.getVideoTracks();
+    
+    console.log('Audio tracks:', audioTracks.length);
+    console.log('Video tracks:', videoTracks.length);
+    
+    // Ensure audio tracks are enabled
+    audioTracks.forEach(track => {
+      track.enabled = true;
+      console.log('Audio track enabled:', track.enabled, 'ready state:', track.readyState);
+    });
+    
     let mediaRecorder;
+    
     try {
-      // Try MP4 format first
-      mediaRecorder = new MediaRecorder(mediaStream, {
-        mimeType: 'video/mp4'
-      });
-    } catch (e) {
-      try {
-        // Fallback to webm with H.264 if available
+      // Try MP4 first (preferred format)
+      if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac')) {
         mediaRecorder = new MediaRecorder(mediaStream, {
-          mimeType: 'video/webm;codecs=h264'
+          mimeType: 'video/mp4;codecs=h264,aac',
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 2500000
         });
-      } catch (e2) {
-        // Final fallback to default webm
+      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
         mediaRecorder = new MediaRecorder(mediaStream, {
-          mimeType: 'video/webm;codecs=vp8,opus'
+          mimeType: 'video/mp4',
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 2500000
+        });
+      } else {
+        // If MP4 is not supported, use default format
+        console.warn('MP4 not supported, using default format');
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 2500000
         });
       }
+      
+      console.log('MediaRecorder created with mimeType:', mediaRecorder.mimeType);
+    } catch (e) {
+      console.error('Failed to create MediaRecorder:', e);
+      mediaRecorder = new MediaRecorder(mediaStream);
     }
     
     mediaRecorderRef.current = mediaRecorder;
