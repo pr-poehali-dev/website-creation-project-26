@@ -88,21 +88,90 @@ const Home = () => {
           const driftSpeed = 60 + Math.random() * 80;
           const resetDelay = Math.random() * driftSpeed;
           
+          const starColor = Math.random() > 0.7 ? 
+                           (Math.random() > 0.5 ? 'rgb(255, 250, 240)' : 'rgb(245, 245, 255)') : 
+                           'rgb(255, 255, 255)';
+          
           return (
             <div
               key={i}
-              className={`absolute ${size} bg-white rounded-full star-glow center-drift`}
+              className="absolute"
               style={{
                 left: `${left}%`,
                 top: `${top}%`,
-                opacity: brightness,
                 animation: `enhanced-twinkle ${twinkleSpeed}s infinite, horizontal-drift ${driftSpeed}s linear infinite`,
                 animationDelay: `${Math.random() * 3}s, ${resetDelay}s`,
-                boxShadow: sizeType > 0.9 ? '0 0 12px rgba(255,255,255,0.5), 0 0 24px rgba(255,255,255,0.3)' : 
-                          sizeType > 0.7 ? '0 0 6px rgba(255,255,255,0.4), 0 0 12px rgba(255,255,255,0.2)' :
-                          '0 0 3px rgba(255,255,255,0.3)'
               }}
-            />
+            >
+              {/* Реалистичная звезда с лучами */}
+              <div className="relative flex items-center justify-center">
+                {/* Основное тело звезды */}
+                <div 
+                  className={sizeType > 0.9 ? 'w-2 h-2' : sizeType > 0.7 ? 'w-1.5 h-1.5' : 'w-1 h-1'}
+                  style={{
+                    background: `radial-gradient(circle, ${starColor} 0%, ${starColor}88 70%, transparent 100%)`,
+                    borderRadius: '50%',
+                    opacity: brightness,
+                    filter: `blur(${sizeType > 0.9 ? '0.5px' : '0.2px'})`,
+                    boxShadow: sizeType > 0.9 ? `0 0 8px ${starColor}66, 0 0 16px ${starColor}33` : 
+                              sizeType > 0.7 ? `0 0 4px ${starColor}55, 0 0 8px ${starColor}22` :
+                              `0 0 2px ${starColor}44`
+                  }}
+                />
+                
+                {/* Горизонтальный луч */}
+                <div 
+                  className="absolute"
+                  style={{
+                    width: sizeType > 0.9 ? '16px' : sizeType > 0.7 ? '12px' : '8px',
+                    height: '1px',
+                    background: `linear-gradient(90deg, transparent, ${starColor}${Math.floor(brightness * 100).toString(16)}, transparent)`,
+                    opacity: brightness * 0.8,
+                    filter: 'blur(0.3px)'
+                  }}
+                />
+                
+                {/* Вертикальный луч */}
+                <div 
+                  className="absolute"
+                  style={{
+                    width: '1px',
+                    height: sizeType > 0.9 ? '16px' : sizeType > 0.7 ? '12px' : '8px',
+                    background: `linear-gradient(180deg, transparent, ${starColor}${Math.floor(brightness * 100).toString(16)}, transparent)`,
+                    opacity: brightness * 0.8,
+                    filter: 'blur(0.3px)'
+                  }}
+                />
+                
+                {/* Диагональные лучи для крупных звезд */}
+                {sizeType > 0.8 && (
+                  <>
+                    <div 
+                      className="absolute"
+                      style={{
+                        width: '10px',
+                        height: '1px',
+                        background: `linear-gradient(90deg, transparent, ${starColor}${Math.floor(brightness * 60).toString(16)}, transparent)`,
+                        transform: 'rotate(45deg)',
+                        opacity: brightness * 0.6,
+                        filter: 'blur(0.4px)'
+                      }}
+                    />
+                    <div 
+                      className="absolute"
+                      style={{
+                        width: '10px',
+                        height: '1px',
+                        background: `linear-gradient(90deg, transparent, ${starColor}${Math.floor(brightness * 60).toString(16)}, transparent)`,
+                        transform: 'rotate(-45deg)',
+                        opacity: brightness * 0.6,
+                        filter: 'blur(0.4px)'
+                      }}
+                    />
+                  </>
+                )}
+              </div>
+            </div>
           );
         })}
 
