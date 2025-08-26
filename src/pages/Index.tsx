@@ -195,21 +195,74 @@ const Index = () => {
 
 
 
-  const sendToTelegram = async () => {
-    if (!recordedVideo) return;
+  const shareVideo = async () => {
+    if (!recordedVideo) {
+      alert('Нет записанного видео для отправки');
+      return;
+    }
     
     try {
-      // Import the separate Telegram sharing function
-      const { sendToTelegram: sendVideoToTelegram } = await import('@/utils/telegramShare');
-      await sendVideoToTelegram(recordedVideo);
+      // Convert video to file
+      const response = await fetch(recordedVideo);
+      const blob = await response.blob();
+      const mimeType = blob.type || 'video/mp4';
+      const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
+      const file = new File([blob], `video_${Date.now()}.${extension}`, { type: mimeType });
+      
+      // Check if Web Share API is available and supports files
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            title: 'Моё видео',
+            text: 'Посмотрите моё видео!',
+            files: [file]
+          });
+          
+          // Navigate to success page after successful share
+          setTimeout(() => {
+            window.location.href = '/success';
+          }, 500);
+          
+          return;
+        } catch (shareError) {
+          if (shareError.name !== 'AbortError') {
+            console.log('Web Share не удался:', shareError);
+          } else {
+            // User cancelled sharing
+            return;
+          }
+        }
+      }
+      
+      // Fallback: Download file and provide manual instructions
+      const url = URL.createObjectURL(blob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = `video_${Date.now()}.${extension}`;
+      downloadLink.style.display = 'none';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      URL.revokeObjectURL(url);
+      
+      // Show instructions for manual sharing
+      const fileName = `video_${Date.now()}.${extension}`;
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        alert(`Видео сохранено: "${fileName}"\n\nДля отправки в Telegram или WhatsApp:\n1. Откройте приложение\n2. Выберите получателя\n3. Нажмите кнопку прикрепления\n4. Выберите сохраненное видео`);
+      } else {
+        alert(`Видео загружено: "${fileName}"\n\nДля отправки:\n1. Откройте Telegram Web или WhatsApp Web\n2. Перетащите файл в окно чата\nили используйте кнопку прикрепления`);
+      }
       
       // Navigate to success page
       setTimeout(() => {
         window.location.href = '/success';
-      }, 1000);
+      }, 2000);
+      
     } catch (error) {
       console.error('Ошибка отправки:', error);
-      alert('Ошибка отправки видео. Попробуйте ещё раз.');
+      alert('Ошибка при подготовке видео. Попробуйте ещё раз.');
     }
   };
 
@@ -362,7 +415,7 @@ const Index = () => {
                     {/* Share Button */}
                     <div className="flex justify-center">
                       <Button
-                        onClick={sendToTelegram}
+                        onClick={shareVideo}
                         className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3"
                         size="lg"
                       >
