@@ -6,6 +6,7 @@ import CameraView from '@/components/CameraView';
 import ShareButtons from '@/components/ShareButtons';
 import QRModal from '@/components/QRModal';
 import { useVideoRecording } from '@/hooks/useVideoRecording';
+import { sendToTelegram } from '@/utils/telegramShare';
 
 const Index = () => {
   const [showQRModal, setShowQRModal] = useState(false);
@@ -21,6 +22,12 @@ const Index = () => {
     formatTime,
     MAX_RECORDING_TIME
   } = useVideoRecording();
+
+  const handleSendToTelegram = () => {
+    if (recordedVideo) {
+      sendToTelegram(recordedVideo);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -85,13 +92,14 @@ const Index = () => {
                 ) : (
                   <ShareButtons
                     recordedVideo={recordedVideo}
+                    onSendToTelegram={handleSendToTelegram}
                   />
                 )}
               </div>
 
               {/* Video Info */}
               <div className="mt-6 text-center text-sm text-gray-500">
-                <p>Формат: MP4 • Качество: 360p • Максимум: 5 минут • Тыловая камера</p>
+                <p>Формат: WebM • Качество: 360p • Максимум: 5 минут • Тыловая камера</p>
                 {recordingTime > 0 && !isRecording && (
                   <p className="mt-1">Длительность: {formatTime(recordingTime)}</p>
                 )}
