@@ -81,50 +81,41 @@
   }
 }
 
-@keyframes float-geometric {
+/* Space animations */
+@keyframes twinkle {
   0%,
   100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  33% {
-    transform: translateY(-20px) rotate(120deg);
-  }
-  66% {
-    transform: translateY(10px) rotate(240deg);
-  }
-}
-
-@keyframes float-geometric-reverse {
-  0%,
-  100% {
-    transform: translateX(0px) rotate(0deg);
+    opacity: 0.3;
+    transform: scale(1);
   }
   50% {
-    transform: translateX(-15px) rotate(180deg);
+    opacity: 1;
+    transform: scale(1.2);
   }
 }
 
-.geometric-shape {
-  position: absolute;
-  opacity: 0.1;
+@keyframes spaceship-fly {
+  0% {
+    transform: translateX(-10vw) translateY(20vh) rotate(-5deg);
+  }
+  25% {
+    transform: translateX(30vw) translateY(10vh) rotate(2deg);
+  }
+  50% {
+    transform: translateX(70vw) translateY(30vh) rotate(-3deg);
+  }
+  75% {
+    transform: translateX(50vw) translateY(60vh) rotate(1deg);
+  }
+  100% {
+    transform: translateX(110vw) translateY(40vh) rotate(-2deg);
+  }
 }
 
-.animate-float-geometric {
-  animation: float-geometric 8s ease-in-out infinite;
-}
-
-.animate-float-geometric-reverse {
-  animation: float-geometric-reverse 6s ease-in-out infinite;
-}
-
-.animate-float-geometric-delay-1 {
-  animation: float-geometric 10s ease-in-out infinite;
-  animation-delay: 2s;
-}
-
-.animate-float-geometric-delay-2 {
-  animation: float-geometric-reverse 7s ease-in-out infinite;
-  animation-delay: 4s;
+.spaceship-container {
+  animation: spaceship-fly 15s linear infinite;
+  top: 20%;
+  left: -10%;
 }
 
 @layer base {

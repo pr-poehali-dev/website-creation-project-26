@@ -58,36 +58,57 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white relative overflow-hidden flex flex-col p-4">
-      {/* Background geometric shapes - hundreds of small cubes */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 relative overflow-hidden flex flex-col p-4">
+      {/* Space background with stars */}
       <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 200 }, (_, i) => {
-          const colors = ['bg-blue-400', 'bg-blue-500', 'bg-blue-600', 'bg-slate-600', 'bg-slate-700', 'bg-slate-800'];
-          const sizes = ['w-2 h-2', 'w-3 h-3', 'w-4 h-4'];
-          const animations = ['animate-float-geometric', 'animate-float-geometric-delay-1', 'animate-float-geometric-delay-2', 'animate-float-geometric-reverse'];
-          const rotations = ['rotate-0', 'rotate-12', 'rotate-45', '-rotate-12', '-rotate-45'];
-          
-          const color = colors[i % colors.length];
-          const size = sizes[i % sizes.length];
-          const animation = animations[i % animations.length];
-          const rotation = rotations[i % rotations.length];
-          
+        {/* Stars */}
+        {Array.from({ length: 150 }, (_, i) => {
           const left = (i * 7) % 100;
           const top = (i * 11) % 100;
+          const size = Math.random() > 0.8 ? 'w-1 h-1' : 'w-0.5 h-0.5';
+          const opacity = 0.3 + Math.random() * 0.7;
           
           return (
             <div
               key={i}
-              className={`geometric-shape ${size} ${color} transform ${rotation} ${animation}`}
+              className={`absolute ${size} bg-white rounded-full`}
               style={{
-                position: 'absolute',
                 left: `${left}%`,
                 top: `${top}%`,
-                opacity: 0.6 + (i % 4) * 0.1
+                opacity,
+                animation: `twinkle ${2 + Math.random() * 3}s infinite`
               }}
             />
           );
         })}
+
+        {/* Spaceship */}
+        <div className="absolute w-32 h-16 spaceship-container">
+          <svg 
+            viewBox="0 0 128 64" 
+            className="w-full h-full drop-shadow-lg"
+            style={{ filter: 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))' }}
+          >
+            {/* Main body */}
+            <ellipse cx="64" cy="32" rx="45" ry="12" fill="#e5e7eb" stroke="#9ca3af" strokeWidth="1"/>
+            
+            {/* Cockpit */}
+            <ellipse cx="85" cy="32" rx="20" ry="8" fill="#3b82f6" stroke="#1e40af" strokeWidth="1"/>
+            <ellipse cx="85" cy="32" rx="15" ry="6" fill="#60a5fa" opacity="0.8"/>
+            
+            {/* Wings */}
+            <ellipse cx="45" cy="20" rx="15" ry="4" fill="#d1d5db"/>
+            <ellipse cx="45" cy="44" rx="15" ry="4" fill="#d1d5db"/>
+            
+            {/* Engine glow */}
+            <ellipse cx="25" cy="32" rx="8" ry="3" fill="#ef4444" opacity="0.8"/>
+            <ellipse cx="20" cy="32" rx="12" ry="2" fill="#fbbf24" opacity="0.6"/>
+            
+            {/* Details */}
+            <circle cx="75" cy="28" r="2" fill="#1e40af"/>
+            <circle cx="80" cy="36" r="1.5" fill="#1e40af"/>
+          </svg>
+        </div>
       </div>
 
       {/* Main content - centered vertically and horizontally */}
