@@ -100,7 +100,7 @@ const Home = () => {
       </div>
 
       {/* Button - positioned at bottom center */}
-      <div className="relative z-10 flex justify-center mb-8 sm:mb-16 -ml-1.5">
+      <div className="relative z-10 flex justify-center mb-64 -ml-1.5">
         <Button
           onClick={handleNewLead}
           disabled={isGettingLocation}
