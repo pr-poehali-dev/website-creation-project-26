@@ -58,7 +58,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-blue-950 to-slate-950 relative overflow-hidden flex flex-col p-4">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-black relative overflow-hidden flex flex-col p-4">
       {/* Enhanced space background */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Static stars with center drift effect */}
@@ -151,8 +151,9 @@ const Home = () => {
         </Button>
       </div>
 
-      {/* Cosmic overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-900/10 to-transparent pointer-events-none"></div>
+      {/* Cosmic fog overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/30 via-gray-900/40 to-black/30 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/20 pointer-events-none"></div>
     </div>
   );
 };
