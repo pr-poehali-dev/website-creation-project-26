@@ -31,9 +31,10 @@ const Index = () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({ 
         video: { 
-          width: { ideal: 320 },
-          height: { ideal: 240 },
-          frameRate: { ideal: 15 }
+          width: { ideal: 480 },
+          height: { ideal: 360 },
+          frameRate: { ideal: 15 },
+          facingMode: 'environment'
         }, 
         audio: true 
       });
@@ -100,11 +101,7 @@ const Index = () => {
     }
   };
 
-  const retakeVideo = () => {
-    setRecordedVideo(null);
-    setRecordingTime(0);
-    startCamera();
-  };
+
 
   const saveVideo = () => {
     if (!recordedVideo) return;
@@ -120,15 +117,9 @@ const Index = () => {
   const sendToTelegram = () => {
     if (!recordedVideo) return;
     
-    fetch(recordedVideo)
-      .then(res => res.blob())
-      .then(blob => {
-        const file = new File([blob], `video_${Date.now()}.webm`, { type: 'video/webm' });
-        
-        // Create telegram share URL (limited functionality in web)
-        const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent('Видео записано с помощью приложения')}&text=${encodeURIComponent('Смотрите мое видео!')}`;
-        window.open(telegramUrl, '_blank');
-      });
+    // Store video in sessionStorage and navigate to telegram page
+    sessionStorage.setItem('recordedVideo', recordedVideo);
+    window.location.href = '/telegram';
   };
 
   const formatTime = (seconds: number) => {
@@ -223,16 +214,7 @@ const Index = () => {
                 ) : (
                   <div className="space-y-3">
                     {/* Action Buttons */}
-                    <div className="flex gap-3 justify-center flex-wrap">
-                      <Button
-                        onClick={retakeVideo}
-                        variant="outline"
-                        className="flex items-center gap-2"
-                      >
-                        <Icon name="RotateCcw" size={18} />
-                        Переснять
-                      </Button>
-                      
+                    <div className="flex justify-center">
                       <Button
                         onClick={saveVideo}
                         className="flex items-center gap-2 bg-primary hover:bg-primary/90"
@@ -258,7 +240,7 @@ const Index = () => {
 
               {/* Video Info */}
               <div className="mt-6 text-center text-sm text-gray-500">
-                <p>Качество: 240p • Максимум: 5 минут</p>
+                <p>Качество: 360p • Максимум: 5 минут • Тыловая камера</p>
                 {recordingTime > 0 && !isRecording && (
                   <p className="mt-1">Длительность: {formatTime(recordingTime)}</p>
                 )}
