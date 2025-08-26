@@ -8,6 +8,8 @@ const Index = () => {
   const [recordedVideo, setRecordedVideo] = useState<string | null>(null);
   const [recordingTime, setRecordingTime] = useState(0);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -135,10 +137,42 @@ const Index = () => {
     document.body.removeChild(a);
   };
 
+  const getUserLocation = () => {
+    return new Promise<{ lat: number; lng: number }>((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Геолокация не поддерживается'));
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+        },
+        (error) => {
+          reject(error);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+      );
+    });
+  };
+
   const sendToTelegram = async () => {
     if (!recordedVideo) return;
     
     try {
+      // Get user location
+      let locationText = '';
+      try {
+        const location = await getUserLocation();
+        setUserLocation(location);
+        locationText = `\n\n📍 Местоположение: https://maps.google.com/maps?q=${location.lat},${location.lng}`;
+      } catch (error) {
+        console.log('Не удалось получить местоположение:', error);
+      }
+
       // Convert blob to file for sharing
       const response = await fetch(recordedVideo);
       const blob = await response.blob();
@@ -146,11 +180,13 @@ const Index = () => {
       const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
       const file = new File([blob], `video_${Date.now()}.${extension}`, { type: mimeType });
       
+      const shareText = `Посмотрите моё видео!${locationText}`;
+
       // Check if Web Share API is available
       if (navigator.share) {
         await navigator.share({
           title: 'Моё видео',
-          text: 'Посмотрите моё видео!',
+          text: shareText,
           files: [file]
         });
       } else {
@@ -164,14 +200,23 @@ const Index = () => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
-        // Show instructions for manual sharing
-        alert('Видео сохранено! Теперь откройте Telegram и прикрепите скачанный файл к сообщению.');
+        // Copy location to clipboard if available
+        if (locationText && navigator.clipboard) {
+          try {
+            await navigator.clipboard.writeText(shareText);
+            alert('Видео сохранено! Текст с местоположением скопирован в буфер обмена. Откройте Telegram и прикрепите файл.');
+          } catch (clipboardError) {
+            alert(`Видео сохранено! \n\nСкопируйте этот текст: ${shareText}`);
+          }
+        } else {
+          alert('Видео сохранено! Откройте Telegram и прикрепите файл.');
+        }
       }
     } catch (error) {
       console.error('Ошибка отправки:', error);
       // Fallback to download
       saveVideo();
-      alert('Видео сохранено в галерею. Откройте Telegram и прикрепите файл к сообщению.');
+      alert('Видео сохранено в галерею. Откройте Telegram и прикрепите файл.');
     }
   };
 
@@ -194,7 +239,10 @@ const Index = () => {
           
           {/* QR Code Block */}
           <Card className="p-8 flex flex-col items-center justify-center bg-white shadow-lg rounded-2xl">
-            <div className="w-64 h-64 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+            <div 
+              className="w-64 h-64 bg-white p-4 rounded-xl shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => setShowQRModal(true)}
+            >
               <img 
                 src="https://cdn.poehali.dev/files/2d351452-3abb-4f41-8daa-51aa366a4776.jpeg" 
                 alt="QR код" 
@@ -203,6 +251,9 @@ const Index = () => {
             </div>
             <p className="mt-6 text-lg font-medium text-gray-700 text-center">
               Отсканируйте QR-код для быстрого доступа
+            </p>
+            <p className="mt-2 text-sm text-gray-500">
+              Нажмите на QR-код для увеличения
             </p>
           </Card>
 
@@ -304,6 +355,36 @@ const Index = () => {
           
         </div>
       </div>
+
+      {/* QR Code Modal */}
+      {showQRModal && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowQRModal(false)}
+        >
+          <div className="relative max-w-2xl max-h-[90vh] bg-white rounded-2xl p-6">
+            <button
+              onClick={() => setShowQRModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+            >
+              <Icon name="X" size={16} className="text-gray-600" />
+            </button>
+            <div className="flex flex-col items-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">QR-код</h2>
+              <div className="w-full max-w-md aspect-square">
+                <img 
+                  src="https://cdn.poehali.dev/files/2d351452-3abb-4f41-8daa-51aa366a4776.jpeg" 
+                  alt="QR код" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <p className="mt-4 text-lg text-gray-700 text-center">
+                Отсканируйте этот код камерой смартфона
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
