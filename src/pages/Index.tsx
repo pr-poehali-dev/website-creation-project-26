@@ -231,13 +231,16 @@ const Index = () => {
       if (locationData) {
         try {
           const location = JSON.parse(locationData);
-          locationText = `\\n📍 ${location.latitude}, ${location.longitude}`;
+          const lat = parseFloat(location.latitude).toFixed(6);
+          const lng = parseFloat(location.longitude).toFixed(6);
+          const mapsUrl = `https://maps.google.com/?q=${lat},${lng}`;
+          locationText = `\n📍 ${lat}, ${lng}\n🗺️ ${mapsUrl}`;
         } catch (e) {
           console.error('Ошибка геолокации:', e);
         }
       }
       
-      const message = `🎥 Новый лид IMPERIA PROMO!\\n📅 ${new Date().toLocaleString()}${locationText}`;
+      const message = `🎥 Новый лид IMPERIA PROMO!\n📅 ${new Date().toLocaleString()}${locationText}`;
       
       // Попробуем Web Share API для прямой отправки
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
