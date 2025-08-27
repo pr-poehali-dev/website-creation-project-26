@@ -223,55 +223,63 @@ const Index = () => {
     try {
       const response = await fetch(recordedVideo);
       const blob = await response.blob();
-      const isAndroid = /Android/.test(navigator.userAgent);
+      const file = new File([blob], `video_${Date.now()}.mp4`, { type: blob.type });
       
-      console.log('Тип видео:', blob.type);
-      console.log('Android устройство:', isAndroid);
-      
-      // Критическая проверка для Android: без AAC аудио нет звука!
-      if (isAndroid) {
-        const isMP4 = blob.type.includes('mp4');
-        const hasAAC = blob.type.includes('mp4a.40') || blob.type.includes('aac');
-        
-        console.log('MP4:', isMP4, 'AAC:', hasAAC, 'MIME:', blob.type);
-        
-        if (!isMP4 || !hasAAC) {
-          alert('❌ Android Проблема со звуком!\n\nВ Telegram на Android видео будет без звука.\n\nПричина: Нет AAC аудиокодека\nФормат: ' + (blob.type || 'неизвестный') + '\n\nПерезапишите видео на другом браузере!');
-          return;
+      // Геолокация для сообщения
+      const locationData = localStorage.getItem('userLocation');
+      let locationText = '';
+      if (locationData) {
+        try {
+          const location = JSON.parse(locationData);
+          locationText = `\\n📍 ${location.latitude}, ${location.longitude}`;
+        } catch (e) {
+          console.error('Ошибка геолокации:', e);
         }
-        
-        console.log('✅ Android: Видео с AAC - звук будет работать!');
       }
       
-      // Скачивание видео
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `imperia_video_${Date.now()}.mp4`;
-      link.click();
-      URL.revokeObjectURL(url);
+      const message = `🎥 Новый лид IMPERIA PROMO!\\n📅 ${new Date().toLocaleString()}${locationText}`;
       
-      // Открытие Telegram
-      const message = encodeURIComponent('🎥 Новый лид IMPERIA PROMO!');
+      // Попробуем Web Share API для прямой отправки
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            title: '🎥 Новый лид IMPERIA PROMO',
+            text: message,
+            files: [file]
+          });
+          
+          // Переход на страницу успеха
+          setTimeout(() => {
+            window.location.href = '/success';
+          }, 500);
+          return;
+          
+        } catch (shareError) {
+          console.log('Web Share отменен или не удался:', shareError.name);
+          if (shareError.name === 'AbortError') {
+            return; // Пользователь отменил
+          }
+        }
+      }
+      
+      // Fallback: открытие Telegram с текстом + инструкции
+      const encodedMessage = encodeURIComponent(message);
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       
       if (isMobile) {
-        // Мобильные: прямое открытие Telegram
-        window.location.href = `tg://msg?text=${message}`;
+        // Мобильные: открываем Telegram
+        window.location.href = `tg://msg?text=${encodedMessage}`;
         
+        // Fallback через веб
         setTimeout(() => {
-          window.open(`https://t.me/share/url?url=${message}`, '_blank');
-        }, 1500);
+          window.open(`https://t.me/share/url?url=${encodedMessage}`, '_blank');
+        }, 1000);
         
-        if (isAndroid) {
-          alert('🎥 Android: Видео с AAC аудио скачано!\n\n🔊 Звук будет работать в Telegram!\n\n1. Откройте Telegram\n2. Прикрепите скачанное видео\n3. Отправьте!');
-        } else {
-          alert('🎥 Видео скачано!\n\n1. Откройте Telegram\n2. Прикрепите видео\n3. Отправьте!');
-        }
+        alert('📱 Откроется Telegram\n\n1. Выберите получателя\n2. Нажмите кнопку прикрепления (📎)\n3. Выберите видео из галереи\n4. Отправьте сообщение');
       } else {
         // Desktop: Telegram Web
-        window.open(`https://web.telegram.org/a/#?text=${message}`, '_blank');
-        alert('💻 Видео скачано!\n\n1. Откройте Telegram Web\n2. Перетащите видео\n3. Отправьте!');
+        window.open(`https://web.telegram.org/a/#?text=${encodedMessage}`, '_blank');
+        alert('💻 Откроется Telegram Web\n\n1. Выберите чат\n2. Перетащите видеофайл в окно чата\n3. Добавьте сообщение как подпись');
       }
       
       setTimeout(() => {
@@ -279,8 +287,8 @@ const Index = () => {
       }, 2000);
       
     } catch (error) {
-      console.error('Ошибка:', error);
-      alert('Ошибка при отправке. Попробуйте снова.');
+      console.error('Ошибка отправки:', error);
+      alert('Ошибка при отправке видео. Попробуйте ещё раз.');
     }
   };
 

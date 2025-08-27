@@ -72,11 +72,11 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
             </Button>
             <Button
               onClick={onShareVideo}
-              className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3"
+              className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3"
               size="lg"
             >
-              <Icon name="Share" size={20} />
-              Отправить
+              <Icon name="Send" size={20} />
+              Отправить в Telegram
             </Button>
           </div>
         </div>
@@ -87,7 +87,7 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
         {recordingTime > 0 && !isRecording && (
           <p className="mt-1">Длительность: {formatTime(recordingTime)}</p>
         )}
-        <p className="mt-1 text-xs text-green-600">🔊 Android: AAC аудио для Telegram</p>
+        <p className="mt-1 text-xs text-blue-600">📲 Прямая отправка в Telegram</p>
       </div>
     </div>
   );
