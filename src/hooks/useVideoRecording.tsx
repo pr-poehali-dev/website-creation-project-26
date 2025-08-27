@@ -26,37 +26,24 @@ export const useVideoRecording = () => {
 
   const getMediaStream = async () => {
     const isAndroid = /Android/i.test(navigator.userAgent);
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    
-    // Telegram совместимые настройки видео (максимум 480p)
-    const videoConstraints = {
-      width: { exact: 480 },        // Точно 480p для максимального качества Telegram
-      height: { exact: 360 },       // Соотношение 4:3 для лучшей совместимости
-      frameRate: { ideal: 30, max: 30 }, // 30fps для плавности
-      facingMode: 'environment'      // Тыловая камера
-    };
-    
-    // Telegram совместимые настройки аудио
-    const audioConstraints = {
-      echoCancellation: true,
-      noiseSuppression: true,
-      autoGainControl: true,
-      // Универсальные настройки для всех платформ
-      sampleRate: 48000,        // 48kHz - поддерживается всеми форматами
-      channelCount: 2,          // Stereo для максимальной совместимости
-      sampleSize: 16,           // 16-bit стандарт
-      latency: 0.01
-    };
-    
-    console.log('Запрос медиа потока:', {
-      platform: isAndroid ? 'Android' : isIOS ? 'iOS' : 'Desktop',
-      video: videoConstraints,
-      audio: audioConstraints
-    });
     
     return await navigator.mediaDevices.getUserMedia({ 
-      video: videoConstraints,
-      audio: audioConstraints
+      video: { 
+        width: { ideal: 480 },
+        height: { ideal: 360 },
+        frameRate: { ideal: 15 },
+        facingMode: 'environment'
+      }, 
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        // Для Android используем настройки совместимые с AAC
+        sampleRate: isAndroid ? 44100 : 48000,  // AAC предпочитает 44.1kHz
+        channelCount: isAndroid ? 2 : 1,        // Stereo для лучшей совместимости на Android
+        sampleSize: 16,
+        latency: 0.01
+      }
     });
   };
 
@@ -84,27 +71,27 @@ export const useVideoRecording = () => {
       const videoTracks = mediaStream.getVideoTracks();
       console.log('Создание MediaRecorder - Audio tracks:', audioTracks.length, 'Video tracks:', videoTracks.length);
       
-      // Приоритет 1: MP4 с H.264 + AAC (максимальная совместимость с Telegram и галереями)
-      if (MediaRecorder.isTypeSupported('video/mp4;codecs=avc1.42E01E,mp4a.40.2')) {
-        console.log('Используем MP4 с H.264 + AAC (приоритет 1)');
+      // Для Android используем MP4 с AAC аудио для 100% совместимости с Telegram
+      if (isAndroid && MediaRecorder.isTypeSupported('video/mp4;codecs=avc1.42E01E,mp4a.40.2')) {
+        console.log('Android: Используем MP4 с H.264 + AAC');
         mediaRecorder = new MediaRecorder(mediaStream, {
           mimeType: 'video/mp4;codecs=avc1.42E01E,mp4a.40.2', // H.264 + AAC
-          audioBitsPerSecond: 128000,  // AAC стандарт для Telegram
-          videoBitsPerSecond: 2000000  // Повышенный битрейт для 480p
+          audioBitsPerSecond: 128000,  // Стандартный битрейт AAC для Telegram
+          videoBitsPerSecond: 1500000
         });
-      } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac')) {
-        console.log('Используем MP4 с H.264 + AAC (приоритет 2)');
+      } else if (isAndroid && MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac')) {
+        console.log('Android: Используем MP4 с H.264 + AAC (альтернативный)');
         mediaRecorder = new MediaRecorder(mediaStream, {
           mimeType: 'video/mp4;codecs=h264,aac',
-          audioBitsPerSecond: 128000,  // AAC для совместимости
-          videoBitsPerSecond: 2000000  // Высокий битрейт для 480p
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 1500000
         });
-      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
-        console.log('Используем MP4 общий (приоритет 3)');
+      } else if (isAndroid && MediaRecorder.isTypeSupported('video/mp4')) {
+        console.log('Android: Используем MP4 (общий)');
         mediaRecorder = new MediaRecorder(mediaStream, {
           mimeType: 'video/mp4',
-          audioBitsPerSecond: 128000,  // Стандартный AAC битрейт
-          videoBitsPerSecond: 2000000  // 480p высокое качество
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 1500000
         });
       } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
         console.log('Используем WebM VP8 + Opus');
@@ -271,92 +258,6 @@ export const useVideoRecording = () => {
     startRecording,
     stopRecording,
     formatTime,
-    MAX_RECORDING_TIME,
-    saveToGallery
-  };
-
-  const saveToGallery = async () => {
-    if (!recordedVideo) {
-      alert('Нет видео для сохранения!');
-      return;
-    }
-
-    try {
-      const isAndroid = /Android/i.test(navigator.userAgent);
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      
-      // Получаем blob из URL
-      const response = await fetch(recordedVideo);
-      const blob = await response.blob();
-      
-      // Проверяем размер и тип файла
-      console.log('Сохранение видео:', {
-        size: blob.size,
-        type: blob.type,
-        platform: isAndroid ? 'Android' : isIOS ? 'iOS' : 'Desktop'
-      });
-      
-      // Создаем правильный blob с звуком для сохранения
-      let finalBlob = blob;
-      
-      // Для Android принудительно устанавливаем MP4 с AAC аудио
-      if (isAndroid) {
-        finalBlob = new Blob([blob], { 
-          type: 'video/mp4' // Принудительно MP4 для Android галереи
-        });
-      }
-      
-      // Проверяем поддержку Web Share API
-      if (navigator.share && (isAndroid || isIOS)) {
-        const file = new File([finalBlob], `video_${Date.now()}.mp4`, {
-          type: 'video/mp4'
-        });
-        
-        console.log('Используем Web Share API для сохранения');
-        await navigator.share({
-          files: [file],
-          title: 'Сохранить видео в галерею',
-          text: 'Видео с камеры'
-        });
-        
-      } else if ('showSaveFilePicker' in window) {
-        // Desktop: File System Access API
-        console.log('Используем File System Access API');
-        const fileHandle = await (window as any).showSaveFilePicker({
-          suggestedName: `video_${Date.now()}.mp4`,
-          types: [{
-            description: 'Video files',
-            accept: {
-              'video/mp4': ['.mp4'],
-              'video/webm': ['.webm']
-            }
-          }]
-        });
-        
-        const writable = await fileHandle.createWritable();
-        await writable.write(finalBlob);
-        await writable.close();
-        
-        alert('✅ Видео успешно сохранено!');
-        
-      } else {
-        // Fallback: обычная загрузка через ссылку
-        console.log('Используем fallback загрузку');
-        const url = URL.createObjectURL(finalBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `video_${Date.now()}.mp4`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        alert('📱 Видео готово к загрузке! Проверьте папку "Загрузки".');
-      }
-      
-    } catch (error) {
-      console.error('Ошибка сохранения видео:', error);
-      alert('❌ Ошибка при сохранении видео. Попробуйте еще раз.');
-    }
+    MAX_RECORDING_TIME
   };
 };
