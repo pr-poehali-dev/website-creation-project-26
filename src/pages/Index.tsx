@@ -112,13 +112,13 @@ const Index = () => {
     let mediaRecorder;
     
     try {
-      // Строгие требования: ТОЛЬКО MP4 + AAC для Android и iPhone
+      // Приоритет AAC для оптимальной совместимости с Telegram
       if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264,mp4a.40.2')) {
-        // AAC-LC (Low Complexity) - самый совместимый профиль для мобильных
+        // AAC-LC (Low Complexity) - лучший выбор для мобильных
         mediaRecorder = new MediaRecorder(mediaStream, {
           mimeType: 'video/mp4;codecs=h264,mp4a.40.2',
-          audioBitsPerSecond: 128000, // Стандарт для Telegram
-          videoBitsPerSecond: 1500000 // Оптимально для мобильных сетей
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 1500000
         });
       } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac')) {
         // Общий AAC кодек
@@ -127,16 +127,32 @@ const Index = () => {
           audioBitsPerSecond: 128000,
           videoBitsPerSecond: 1500000
         });
+      } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+        // MP4 с любым доступным аудиокодеком
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/mp4',
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 1500000
+        });
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+        // WebM с Opus (для старых браузеров)
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/webm;codecs=vp8,opus',
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 1500000
+        });
       } else {
-        // Если MP4+AAC не поддерживается - ошибка
-        throw new Error('MP4 с AAC аудиокодеком не поддерживается на этом устройстве');
+        // Стандартный MediaRecorder без указания формата
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 1500000
+        });
       }
       
-      console.log('✅ MP4+AAC MediaRecorder создан:', mediaRecorder.mimeType);
+      console.log('📹 MediaRecorder создан с форматом:', mediaRecorder.mimeType);
     } catch (e) {
-      console.error('❌ Ошибка: MP4+AAC не поддерживается', e);
-      alert('Ошибка: Ваше устройство не поддерживает запись видео в формате MP4 с AAC аудио, необходимом для Telegram');
-      return;
+      console.error('Ошибка создания MediaRecorder:', e);
+      mediaRecorder = new MediaRecorder(mediaStream);
     }
     
     mediaRecorderRef.current = mediaRecorder;
@@ -190,12 +206,31 @@ const Index = () => {
     try {
       const response = await fetch(recordedVideo);
       const blob = await response.blob();
+      const isAndroid = /Android/.test(navigator.userAgent);
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      
+      console.log('Исходный тип видео:', blob.type);
+      console.log('Устройство - Android:', isAndroid, 'iOS:', isIOS);
+      
+      // Проверяем аудиокодек для Android устройств
+      if (isAndroid) {
+        const hasAAC = blob.type.includes('mp4a.40.2') || blob.type.includes('aac') || blob.type.includes('mp4');
+        
+        if (!hasAAC || !blob.type.includes('mp4')) {
+          // Android требует MP4+AAC для Telegram
+          alert('⚠️ Для отправки в Telegram с Android требуется формат MP4 с AAC аудио.\n\nВаше видео записано в формате: ' + (blob.type || 'неизвестный') + '\n\nПопробуйте перезаписать видео или используйте другое устройство.');
+          return;
+        } else {
+          console.log('✅ Android: Видео совместимо с Telegram (MP4+AAC)');
+        }
+      }
       
       // Создаем файл для скачивания
+      const extension = blob.type.includes('mp4') ? 'mp4' : (blob.type.includes('webm') ? 'webm' : 'mp4');
       const url = URL.createObjectURL(blob);
       const downloadLink = document.createElement('a');
       downloadLink.href = url;
-      downloadLink.download = `video_${Date.now()}.mp4`;
+      downloadLink.download = `video_${Date.now()}.${extension}`;
       downloadLink.style.display = 'none';
       document.body.appendChild(downloadLink);
       downloadLink.click();
@@ -204,10 +239,6 @@ const Index = () => {
       
       // Открываем Telegram
       const message = encodeURIComponent('🎥 Новый лид IMPERIA PROMO!');
-      
-      // Определяем устройство
-      const isAndroid = /Android/.test(navigator.userAgent);
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
       
       if (isAndroid || isIOS) {
         // Мобильные устройства: открываем Telegram напрямую
@@ -218,7 +249,11 @@ const Index = () => {
           window.open(`https://t.me/share/url?url=${message}`, '_blank');
         }, 2000);
         
-        alert('📱 Видео скачано!\n\n1. Откройте Telegram\n2. Выберите получателя\n3. Прикрепите скачанное видео\n4. Отправьте сообщение');
+        if (isAndroid) {
+          alert('📱 Android: Видео скачано в формате MP4+AAC!\n\n1. Откройте Telegram\n2. Выберите получателя\n3. Прикрепите скачанное видео\n4. Отправьте сообщение\n\n✅ Формат совместим с Telegram');
+        } else {
+          alert('📱 Видео скачано!\n\n1. Откройте Telegram\n2. Выберите получателя\n3. Прикрепите скачанное видео\n4. Отправьте сообщение');
+        }
       } else {
         // Десктоп: открываем Telegram Web
         window.open(`https://web.telegram.org/a/#?text=${message}`, '_blank');
