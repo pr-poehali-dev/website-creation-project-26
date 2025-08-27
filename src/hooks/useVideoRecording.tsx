@@ -25,6 +25,8 @@ export const useVideoRecording = () => {
   }, [stream]);
 
   const getMediaStream = async () => {
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    
     return await navigator.mediaDevices.getUserMedia({ 
       video: { 
         width: { ideal: 480 },
@@ -36,8 +38,11 @@ export const useVideoRecording = () => {
         echoCancellation: true,
         noiseSuppression: true,
         autoGainControl: true,
-        sampleRate: 48000,  // Standard for WebM/Opus
-        channelCount: 1     // Mono for better Telegram compatibility
+        // Для Android используем настройки совместимые с AAC
+        sampleRate: isAndroid ? 44100 : 48000,  // AAC предпочитает 44.1kHz
+        channelCount: isAndroid ? 2 : 1,        // Stereo для лучшей совместимости на Android
+        sampleSize: 16,
+        latency: 0.01
       }
     });
   };
@@ -58,43 +63,66 @@ export const useVideoRecording = () => {
 
   const createMediaRecorder = (mediaStream: MediaStream) => {
     let mediaRecorder;
+    const isAndroid = /Android/i.test(navigator.userAgent);
     
     try {
-      // WebM with VP8+Opus is more compatible with Telegram on Android
-      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+      // Проверяем аудио и видео треки
+      const audioTracks = mediaStream.getAudioTracks();
+      const videoTracks = mediaStream.getVideoTracks();
+      console.log('Создание MediaRecorder - Audio tracks:', audioTracks.length, 'Video tracks:', videoTracks.length);
+      
+      // Для Android используем MP4 с AAC аудио для 100% совместимости с Telegram
+      if (isAndroid && MediaRecorder.isTypeSupported('video/mp4;codecs=avc1.42E01E,mp4a.40.2')) {
+        console.log('Android: Используем MP4 с H.264 + AAC');
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/mp4;codecs=avc1.42E01E,mp4a.40.2', // H.264 + AAC
+          audioBitsPerSecond: 128000,  // Стандартный битрейт AAC для Telegram
+          videoBitsPerSecond: 1500000
+        });
+      } else if (isAndroid && MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac')) {
+        console.log('Android: Используем MP4 с H.264 + AAC (альтернативный)');
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/mp4;codecs=h264,aac',
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 1500000
+        });
+      } else if (isAndroid && MediaRecorder.isTypeSupported('video/mp4')) {
+        console.log('Android: Используем MP4 (общий)');
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/mp4',
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 1500000
+        });
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+        console.log('Используем WebM VP8 + Opus');
         mediaRecorder = new MediaRecorder(mediaStream, {
           mimeType: 'video/webm;codecs=vp8,opus',
-          audioBitsPerSecond: 96000,  // Lower bitrate for better compatibility
-          videoBitsPerSecond: 1000000 // Lower bitrate for better compatibility
+          audioBitsPerSecond: 96000,
+          videoBitsPerSecond: 1000000
         });
       } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')) {
+        console.log('Используем WebM VP9 + Opus');
         mediaRecorder = new MediaRecorder(mediaStream, {
           mimeType: 'video/webm;codecs=vp9,opus',
           audioBitsPerSecond: 96000,
           videoBitsPerSecond: 1000000
         });
       } else if (MediaRecorder.isTypeSupported('video/webm')) {
+        console.log('Используем WebM (общий)');
         mediaRecorder = new MediaRecorder(mediaStream, {
           mimeType: 'video/webm',
           audioBitsPerSecond: 96000,
           videoBitsPerSecond: 1000000
         });
-      } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac')) {
-        // MP4 as fallback
-        mediaRecorder = new MediaRecorder(mediaStream, {
-          mimeType: 'video/mp4;codecs=h264,aac',
-          audioBitsPerSecond: 96000,
-          videoBitsPerSecond: 1000000
-        });
       } else {
-        // Default format
-        console.warn('Using default MediaRecorder format');
+        console.warn('Используем MediaRecorder по умолчанию');
         mediaRecorder = new MediaRecorder(mediaStream);
       }
       
-      console.log('MediaRecorder created with mimeType:', mediaRecorder.mimeType);
+      console.log('MediaRecorder создан с MIME:', mediaRecorder.mimeType);
+      console.log('Platform:', isAndroid ? 'Android' : 'Other');
     } catch (e) {
-      console.error('Failed to create MediaRecorder:', e);
+      console.error('Ошибка создания MediaRecorder:', e);
       mediaRecorder = new MediaRecorder(mediaStream);
     }
 
@@ -128,9 +156,33 @@ export const useVideoRecording = () => {
     };
     
     mediaRecorder.onstop = () => {
-      // Determine the correct MIME type based on what was actually recorded
-      const mimeType = mediaRecorderRef.current?.mimeType || 'video/mp4';
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      
+      // Определяем правильный MIME type для совместимости с Telegram
+      let mimeType = mediaRecorderRef.current?.mimeType || 'video/mp4';
+      
+      // Для Android принудительно используем video/mp4 для максимальной совместимости
+      if (isAndroid && !mimeType.includes('mp4')) {
+        console.log('Android: Конвертируем MIME тип в MP4 для Telegram совместимости');
+        mimeType = 'video/mp4';
+      }
+      
       const blob = new Blob(chunksRef.current, { type: mimeType });
+      
+      // Проверяем размер и содержимое blob
+      console.log('Финальное видео:', {
+        size: blob.size,
+        type: blob.type,
+        platform: isAndroid ? 'Android' : 'Other',
+        chunks: chunksRef.current.length
+      });
+      
+      if (blob.size === 0) {
+        console.error('Пустой blob - проблема с записью!');
+        alert('Ошибка: видео не было записано. Попробуйте еще раз.');
+        return;
+      }
+      
       const videoURL = URL.createObjectURL(blob);
       setRecordedVideo(videoURL);
     };

@@ -87,7 +87,7 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
         {recordingTime > 0 && !isRecording && (
           <p className="mt-1">Длительность: {formatTime(recordingTime)}</p>
         )}
-        <p className="mt-1 text-xs text-blue-600">📲 Прямая отправка в Telegram</p>
+        <p className="mt-1 text-xs text-blue-600">🎵 Android: AAC аудио + прямая отправка в Telegram</p>
       </div>
     </div>
   );
