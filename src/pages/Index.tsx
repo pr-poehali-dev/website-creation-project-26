@@ -225,26 +225,78 @@ const Index = () => {
       const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
       const file = new File([blob], `video_${Date.now()}.${extension}`, { type: mimeType });
       
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      // Сохраняем видео в sessionStorage для страницы Telegram
+      sessionStorage.setItem('recordedVideo', recordedVideo);
+      sessionStorage.setItem('videoBlob', URL.createObjectURL(blob));
+      sessionStorage.setItem('videoMessage', `🎥 Новый лид IMPERIA PROMO!\n\n📅 Время записи: ${new Date().toLocaleString()}${locationText}${googleMapsLink}`);
+      
+      // Определяем устройство
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isAndroid = /Android/.test(navigator.userAgent);
+      
+      // Попробуем Web Share API только если поддерживается
+      if (navigator.share && navigator.canShare) {
         try {
-          await navigator.share({
-            title: '🎥 Новый лид IMPERIA PROMO',
-            text: `🎥 Новый лид IMPERIA PROMO!\n\n📅 Время записи: ${new Date().toLocaleString()}${locationText}${googleMapsLink}`,
-            files: [file]
-          });
+          // Проверяем поддержку файлов
+          const canShareFiles = navigator.canShare({ files: [file] });
+          console.log('Can share files:', canShareFiles);
           
-          setTimeout(() => {
-            window.location.href = '/success';
-          }, 500);
-          
-          return;
-        } catch (shareError) {
-          if (shareError.name !== 'AbortError') {
-            console.log('Web Share не удался:', shareError);
-          } else {
+          if (canShareFiles) {
+            await navigator.share({
+              title: '🎥 Новый лид IMPERIA PROMO',
+              text: `🎥 Новый лид IMPERIA PROMO!\n\n📅 Время записи: ${new Date().toLocaleString()}${locationText}${googleMapsLink}`,
+              files: [file]
+            });
+            
+            setTimeout(() => {
+              window.location.href = '/success';
+            }, 500);
+            
             return;
+          } else {
+            console.log('Файлы не поддерживаются, используем альтернативный способ');
+          }
+        } catch (shareError) {
+          console.error('Web Share ошибка:', shareError);
+          if (shareError.name === 'AbortError') {
+            return; // Пользователь отменил
           }
         }
+      }
+      
+      // Альтернативные способы для мобильных устройств
+      if (isMobile) {
+        // Попробуем Telegram URL scheme (работает лучше на мобильных)
+        const message = encodeURIComponent(`🎥 Новый лид IMPERIA PROMO!\n\n📅 Время: ${new Date().toLocaleString()}${locationText}${googleMapsLink}\n\n📎 Видео прикреплено отдельно`);
+        
+        if (isAndroid) {
+          // Android: используем intent для Telegram
+          const telegramIntent = `intent://msg?text=${message}#Intent;scheme=tg;package=org.telegram.messenger;end`;
+          window.location.href = telegramIntent;
+          
+          // Fallback через обычную ссылку
+          setTimeout(() => {
+            window.open(`https://t.me/share/url?url=${message}`, '_blank');
+          }, 1000);
+          
+        } else if (isIOS) {
+          // iOS: используем URL scheme для Telegram
+          const telegramUrl = `tg://msg?text=${message}`;
+          window.location.href = telegramUrl;
+          
+          // Fallback через Safari
+          setTimeout(() => {
+            window.open(`https://t.me/share/url?url=${message}`, '_blank');
+          }, 1000);
+        }
+        
+        // Показываем инструкции пользователю
+        alert(`📱 Открываем Telegram...\n\n1. Выберите получателя\n2. Отправьте сообщение\n3. Прикрепите видео вручную (кнопка скрепки)\n\nВидео автоматически скачается в галерею.`);
+      } else {
+        // Десктоп: переходим на специальную страницу Telegram
+        window.location.href = '/telegram';
+        return;
       }
       
       const url = URL.createObjectURL(blob);
