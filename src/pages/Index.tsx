@@ -299,6 +299,7 @@ const Index = () => {
         return;
       }
       
+      // Fallback: принудительное скачивание (на случай если все остальное не сработало)
       const url = URL.createObjectURL(blob);
       const downloadLink = document.createElement('a');
       downloadLink.href = url;
@@ -310,7 +311,6 @@ const Index = () => {
       URL.revokeObjectURL(url);
       
       const fileName = `video_${Date.now()}.${extension}`;
-      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
       if (isMobile) {
         alert(`🎥 Новый лид IMPERIA PROMO!\n\nВидео сохранено: "${fileName}"\n📅 Время: ${new Date().toLocaleString()}${locationText}${googleMapsLink}\n\nДля отправки в Telegram:\n1. Откройте Telegram\n2. Выберите получателя\n3. Нажмите кнопку прикрепления\n4. Выберите сохраненное видео\n5. Добавьте это сообщение в качестве подписи`);
