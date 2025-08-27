@@ -43,7 +43,7 @@ const Index = () => {
           echoCancellation: true,
           noiseSuppression: true,
           autoGainControl: true,
-          sampleRate: 44100,
+          sampleRate: 48000, // Telegram предпочитает 48kHz для AAC
           channelCount: 2
         }
       });
@@ -72,7 +72,7 @@ const Index = () => {
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true,
-            sampleRate: 44100,
+            sampleRate: 48000, // Telegram предпочитает 48kHz для AAC
             channelCount: 2
           }
         });
@@ -112,9 +112,24 @@ const Index = () => {
     let mediaRecorder;
     
     try {
-      if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac')) {
+      // Приоритет для Telegram - AAC аудиокодек
+      if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264,mp4a.40.2')) {
+        // mp4a.40.2 это AAC-LC (наиболее совместимый профиль AAC)
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/mp4;codecs=h264,mp4a.40.2',
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 2500000
+        });
+      } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac')) {
         mediaRecorder = new MediaRecorder(mediaStream, {
           mimeType: 'video/mp4;codecs=h264,aac',
+          audioBitsPerSecond: 128000,
+          videoBitsPerSecond: 2500000
+        });
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+        // Fallback для браузеров без MP4/AAC поддержки
+        mediaRecorder = new MediaRecorder(mediaStream, {
+          mimeType: 'video/webm;codecs=vp8,opus',
           audioBitsPerSecond: 128000,
           videoBitsPerSecond: 2500000
         });
@@ -125,16 +140,18 @@ const Index = () => {
           videoBitsPerSecond: 2500000
         });
       } else {
-        console.warn('MP4 not supported, using default format');
+        console.warn('Оптимальные форматы не поддерживаются, используем стандартный');
         mediaRecorder = new MediaRecorder(mediaStream, {
           audioBitsPerSecond: 128000,
           videoBitsPerSecond: 2500000
         });
       }
       
-      console.log('MediaRecorder created with mimeType:', mediaRecorder.mimeType);
+      console.log('MediaRecorder создан с mimeType:', mediaRecorder.mimeType);
+      console.log('Поддержка AAC (mp4a.40.2):', MediaRecorder.isTypeSupported('video/mp4;codecs=h264,mp4a.40.2'));
+      console.log('Поддержка AAC (aac):', MediaRecorder.isTypeSupported('video/mp4;codecs=h264,aac'));
     } catch (e) {
-      console.error('Failed to create MediaRecorder:', e);
+      console.error('Ошибка создания MediaRecorder:', e);
       mediaRecorder = new MediaRecorder(mediaStream);
     }
     

@@ -83,10 +83,11 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
       )}
       
       <div className="mt-6 text-center text-sm text-gray-500">
-        <p>Формат: MP4 • Качество: 360p • Максимум: 5 минут • Тыловая камера</p>
+        <p>Формат: MP4 • Аудио: AAC • Качество: 360p • Максимум: 5 минут • Тыловая камера</p>
         {recordingTime > 0 && !isRecording && (
           <p className="mt-1">Длительность: {formatTime(recordingTime)}</p>
         )}
+        <p className="mt-1 text-xs">Оптимизировано для Telegram iOS/Android</p>
       </div>
     </div>
   );
